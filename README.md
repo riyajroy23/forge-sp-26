@@ -1,5 +1,4 @@
 # forge-sp-26
-# ReCo-op - Forge Software Spring '26
 
 ## Project Overview
 
@@ -23,10 +22,8 @@ Some of the features for Reco-Op users will be:
 
 ### Backend
 
-* API server (details may evolve as the project progresses)
-* Database integration (e.g., Supabase)
+* Database integration - Supabase
 
----
 
 ## Repository Structure
 
@@ -49,7 +46,6 @@ Make sure you have the following installed:
 * **npm** or **yarn**
 * **Git**
 
----
 
 ### 1. Clone the repository
 
@@ -57,7 +53,7 @@ Make sure you have the following installed:
 git clone https://github.com/riyajroy23/forge-sp-26.git
 cd forge-sp-26
 ```
----
+
 
 ### 2. Frontend setup
 
