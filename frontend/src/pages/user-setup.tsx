@@ -1,9 +1,10 @@
 import {
   Card,
   CardHeader,
+  CardTitle,
   CardContent,
   CardFooter,
-} from "@./components/card";
+} from "@/components/ui/card";
 
 export default function UserSetup() {
   return (
