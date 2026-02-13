@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box !important;
+}
+
 .signup-page {
     min-height: 100vh;
     display: flex;
@@ -11,15 +15,16 @@
 .signup-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     max-width: 500px;
-    width: 100%;
+    width: 400px;
 }
 
 .signup-logo {
     width: 180px;
     height: auto;
     margin-bottom: 2rem;
+    align-self: center;
 }
 
 .signup-title {
@@ -28,6 +33,7 @@
     margin-bottom: 2rem;
     color: #1a1a1a;
     font-family: 'Fredoka', sans-serif;
+    text-align: center;
 }
 
 .signup-form {
@@ -90,6 +96,7 @@
     font-size: 0.95rem;
     color: #1a1a1a;
     font-family: 'Fredoka', sans-serif;
+    text-align: center;
 }
 
 .signin-link a {

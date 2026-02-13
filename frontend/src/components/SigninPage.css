@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box !important;
+}
+
 .signin-page {
     min-height: 100vh;
     display: flex;
@@ -11,15 +15,17 @@
 .signin-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    max-width: 500px;
-    width: 100%;
+    align-items: stretch;
+    max-width: 400px;
+    min-width: 400px;
+    width: 400px;
 }
 
 .signin-logo {
     width: 180px;
     height: auto;
     margin-bottom: 2rem;
+    align-self: center;
 }
 
 .signin-title {
@@ -28,6 +34,7 @@
     margin-bottom: 2rem;
     color: #1a1a1a;
     font-family: 'Fredoka', sans-serif;
+    text-align: center;
 }
 
 .signin-form {
@@ -37,14 +44,13 @@
     gap: 1.25rem;
 }
 
-.signin-form .form-group {
+.signin-page .form-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    width: 100%;
 }
 
-.signin-form .form-group label {
+.signin-page .form-group label {
     font-size: 1rem;
     font-weight: 400;
     color: #1a1a1a;
@@ -52,8 +58,8 @@
     font-family: 'Fredoka', sans-serif;
 }
 
-.signin-form .form-group input {
-    width: 100%;
+.signin-page .form-group input {
+    width: 100% !important;
     padding: 0.75rem 1rem;
     font-size: 1rem;
     border: 2px solid #1a1a1a;
@@ -61,10 +67,9 @@
     background-color: white;
     transition: border-color 0.2s;
     font-family: 'Fredoka', sans-serif;
-    box-sizing: border-box;
 }
 
-.signin-form .form-group input:focus {
+.signin-page .form-group input:focus {
     outline: none;
     border-color: #a83232;
 }
