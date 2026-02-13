@@ -1,0 +1,105 @@
+.signin-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 2rem;
+    font-family: 'Fredoka', sans-serif;
+}
+
+.signin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.signin-logo {
+    width: 180px;
+    height: auto;
+    margin-bottom: 2rem;
+}
+
+.signin-title {
+    font-size: 2.5rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    color: #1a1a1a;
+    font-family: 'Fredoka', sans-serif;
+}
+
+.signin-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.signin-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.signin-form .form-group label {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #1a1a1a;
+    text-align: left;
+    font-family: 'Fredoka', sans-serif;
+}
+
+.signin-form .form-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 2px solid #1a1a1a;
+    border-radius: 8px;
+    background-color: white;
+    transition: border-color 0.2s;
+    font-family: 'Fredoka', sans-serif;
+    box-sizing: border-box;
+}
+
+.signin-form .form-group input:focus {
+    outline: none;
+    border-color: #a83232;
+}
+
+.signin-button {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    background-color: #a83232;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: 'Fredoka', sans-serif;
+}
+
+.signin-button:hover {
+    background-color: #8a2828;
+}
+
+.signup-link {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    font-family: 'Fredoka', sans-serif;
+}
+
+.signup-link a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
