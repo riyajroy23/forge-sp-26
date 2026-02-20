@@ -1,6 +1,6 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 import UserSetup from "./pages/user-setup";
-import ProfilePage from "./Pages/profile_page";
+import ProfilePage from "./pages/profile_page";
 import { Button } from "@/components/ui/button";
 
 export default function App() {
@@ -16,6 +16,7 @@ export default function App() {
       </div>
 
       <Routes>
+        <Route path="*" element={<Navigate to="/setup" />} />
         <Route path="/setup" element={<UserSetup />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Routes>
