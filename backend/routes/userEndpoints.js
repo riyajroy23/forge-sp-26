@@ -14,7 +14,7 @@ let users = [
         major: 'Computer Science',
         grad_year: 2026,
         bio: 'Aspiring software engineer',
-        area_of_interest: null,
+        area_of_interest: ["software engineering", "machine learning"],
         current_company: null,
         user_role: 'STUDENT',
         profile_picture_url: null,
@@ -84,25 +84,9 @@ let nextUserId = 3;
 // GET /users/:userId - Get a specific user's profile
 router.get('/users/:userId', (req, res) => { 
     try {
-        // extract token
-        const authHeader = req.headers.authorization;
-
-        if (!authHeader) {
-            return res.status(401).json({
-              success: false,
-              error: 'No authorization token provided'
-            });
-          }
-        
-        const token = authHeader.replace('Bearer ', '');
-
-        // validate token
-        const userId = getUserIdFromToken(token);
+        const userId = authenticateToken(req, res);
         if (!userId) {
-            return res.status(401).json({
-                success: false,
-                error: 'Invalid or expired token'
-            });
+            return;
         }
 
         const user = findUserById(parseInt(req.params.userId));
@@ -137,25 +121,9 @@ router.get('/users/:userId', (req, res) => {
 // PUT /users/:userId/profile - Update the current user's profile information
 router.put('/users/:userId/profile', (req, res) => {
     try {
-        // check authentication token 
-        const authHeader = req.headers.authorization;
-
-        if (!authHeader) {
-            return res.status(401).json({
-                success: false,
-                error: 'No authorization token provided'
-            })
-        }
-
-        const token = authHeader.replace('Bearer ', '');
-
-        // validate token
-        const currentUserId = getUserIdFromToken(token);
+        const currentUserId = authenticateToken(req, res);
         if (!currentUserId) {
-            return res.status(401).json({
-                success: false,
-                error: 'Invalid or expired token'
-            })
+            return;
         }
 
         // ensure the current user matches the profile being updated
@@ -195,7 +163,7 @@ router.put('/users/:userId/profile', (req, res) => {
         }
 
         if (career_interest !== undefined) {
-            user.career_interest = career_interest;
+            user.area_of_interest = [].concat(career_interest);
         }
 
         if (current_company !== undefined) {
@@ -235,25 +203,9 @@ router.put('/users/:userId/profile', (req, res) => {
 // GET /users/search - Search for others users by filters (username, career_interest, company, major, has_cooped_at)
 router.get('/users/search', (req, res) => {
     try {
-        // check authentication token 
-        const authHeader = req.headers.authorization;
-
-        if (!authHeader) {
-            return res.status(401).json({
-                success: false,
-                error: 'No authorization token provided'
-            })
-        }
-
-        const token = authHeader.replace('Bearer ', '');
-
-        // validate token
-        const userId = getUserIdFromToken(token);
+        const userId = authenticateToken(req, res);
         if (!userId) {
-            return res.status(401).json({
-                success: false,
-                error: 'Invalid or expired token'
-            })
+            return;
         }
 
         // extract query parameters
@@ -271,7 +223,7 @@ router.get('/users/search', (req, res) => {
 
         if (career_interest) {
             results = results.filter(u => 
-                u.area_of_interest && u.area_of_interest.toLowerCase().includes(career_interest.toLowerCase())
+                u.area_of_interest && u.area_of_interest.some(interest => interest.toLowerCase().includes(career_interest.toLowerCase()))
              );
         }
 
@@ -281,6 +233,7 @@ router.get('/users/search', (req, res) => {
                 (u.previous_experience && u.previous_experience.toLowerCase().includes(company.toLowerCase()))
             );
         }
+
 
         if (major) {
             results = results.filter(u => 
@@ -312,3 +265,28 @@ router.get('/users/search', (req, res) => {
         })
     }
 });
+
+const authenticateToken = (req, res) => {
+    // check authentication token 
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(401).json({
+            success: false,
+            error: 'No authorization token provided'
+        })
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+
+    // validate token
+    const userId = getUserIdFromToken(token);
+    if (!userId) {
+        return res.status(401).json({
+            success: false,
+            error: 'Invalid or expired token'
+        })
+    }
+
+    return userId;
+}
