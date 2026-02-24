@@ -8,7 +8,7 @@
   --font-spacegrotesk: 'Space Grotesk', system-ui, space-grotesk;
   --color-background: var(--background);
   --color-sidebar: var(--sidebar);
-  --color-sidebar-buttons: (--sidebar-buttons);
+  --color-sidebar-buttons: var(--sidebar-buttons);
   --color-topbar: var(--topbar);
   --color-settingsbtn: var(--settings-btn);
   --color-settingsbtnborder: var(--settings-btn-border);
@@ -25,7 +25,7 @@
   --color-settings-bg: var(--settings);
   --color-voicecall-bg: var(--voicecall);
   --color-voicetopbar: var(--voice-topbar);
-  --color-voiceuserprofiles: cvar(--voice-userprofiles);
+  --color-voiceuserprofiles: var(--voice-userprofiles);
   
 }
 
@@ -61,64 +61,64 @@
 }
 
 
-@layer onboarding-btns {
+@layer components {
+
+  /* Onboarding */
   .title {
-    @apply text-color-black text-4x1 font-fredoka;
+    @apply text-[var(--color-black)] text-4xl font-fredoka;
   }
-  .display-name {
-    @apply text-color-black text-lg font-fredoka;
-  }
-  .email {
-    @apply text-color-black text-lg font-fredoka;
-  }
+
+  .display-name,
+  .email,
   .password {
-    @apply text-color-black text-lg font-fredoka;
+    @apply text-[var(--color-black)] text-lg font-fredoka;
   }
+
   .proceed-btn {
-    @apply text-color-white text-base font-fredoka;
+    @apply text-[var(--color-white)] text-base font-fredoka;
   }
-  
-}
 
-
-@layer landing-page-btns {
+  /* Landing */
   .todo-header {
-    @apply text-color-black text-3x1 font-fredoka;
+    @apply text-[var(--color-black)] text-3xl font-fredoka;
   }
+
   .group-header {
-    @apply text-color-black text-sm font-spacegrotesk;
+    @apply text-[var(--color-black)] text-sm font-spacegrotesk;
   }
+
   .todo-info {
-    @apply text-color-black text-sm font-fredoka;
+    @apply text-[var(--color-black)] text-sm font-fredoka;
   }
+
   .sidebar-options {
-    @apply text-color-white text-base font-fredoka;
+    @apply text-[var(--color-white)] text-base font-fredoka;
   }
+
   .username {
-    @apply text-color-white text-2x1 font-spacegrotesk;
+    @apply text-[var(--color-white)] text-2xl font-spacegrotesk;
   }
-}
 
-@layer account-settings-btns {
-  .title {
-    @apply text-color-black text-5x1 font-spacegrotesk font-bold;
+  /* Account Settings */
+  .settings-title {
+    @apply text-[var(--color-black)] text-5xl font-spacegrotesk font-bold;
   }
+
   .headers {
-    @apply text-color-black text-4x1 font-spacegrotesk font-bold;
+    @apply text-[var(--color-black)] text-4xl font-spacegrotesk font-bold;
   }
-  .info-labels {
-    @apply text-color-black text-2x1 font-spacegrotesk;
-  }
-  .user-info {
-    @apply text-color-black text-2x1 font-spacegrotesk font-bold;
-  }
-}
 
-@layer voice-call {
-  .usernames {
-    @apply text-color-white text-lg font-fredoka;
+  .info-labels {
+    @apply text-[var(--color-black)] text-2xl font-spacegrotesk;
   }
+
+  .user-info {
+    @apply text-[var(--color-black)] text-2xl font-spacegrotesk font-bold;
+  }
+
+  /* Voice Call */
+  .usernames,
   .timer {
-    @apply text-color-white text-lg font-fredoka;
+    @apply text-[var(--color-white)] text-lg font-fredoka;
   }
 }
