@@ -290,3 +290,5 @@ const authenticateToken = (req, res) => {
 
     return userId;
 }
+
+module.exports = router;
