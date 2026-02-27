@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Mock data -- using hard-coded values, waiting for database connection
-companies = [
+const companies = [
     {
         company_id: 1,
         name: 'Microsoft',
