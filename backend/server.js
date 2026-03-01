@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import authRoutes from './routes/userAuth.js';  
+import authRoutes from './routes/userAuth.js';
+import userRoutes from './routes/userEndpoints.js';
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api', authRoutes);
+app.use('/api', userRoutes);
 
 // Test route
 app.get('/', (req, res) => {
