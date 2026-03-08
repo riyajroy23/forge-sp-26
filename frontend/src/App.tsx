@@ -1,6 +1,7 @@
 import { Routes, Route, Link, Navigate } from "react-router-dom";
-import UserSetup from "./pages/user-setup";
-import ProfilePage from "./pages/profile_page";
+import UserSetup from "./Pages/user-setup";
+import ProfilePage from "./Pages/profile_page";
+import CompanyOverviewPage from "./Pages/company_overview";
 import { Button } from "@/components/ui/button";
 
 export default function App() {
@@ -13,12 +14,16 @@ export default function App() {
         <Link to="/profile">
           <Button>Profile</Button>
         </Link>
+        <Link to="/company/1">
+          <Button>Company Overview</Button>
+        </Link>
       </div>
 
       <Routes>
         <Route path="*" element={<Navigate to="/setup" />} />
         <Route path="/setup" element={<UserSetup />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/company/:id" element={<CompanyOverviewPage />} />
       </Routes>
     </div>
   );
