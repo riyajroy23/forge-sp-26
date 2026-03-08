@@ -1,107 +1,9 @@
-const express = require('express');
+import express from 'express';
+import { supabase } from '../lib/supabaseClient.ts';
 const router = express.Router();
-const { supabase } = require('../db');
 
-// Note: company overview data (descriptions, roles, FAQs) is hardcoded for now -- 
-// waiting for the Company table to be added to the database schema.
-
-// Mock company data -- extended with FAQs for overview functionality
-const companies = [
-    {
-        company_id: 1,
-        name: 'Microsoft',
-        industry: 'Technology',
-        description: 'Developing and supporting software, services, devices, and solutions that help people and businesses realize their full potential.',
-        careers_page_url: 'https://careers.microsoft.com/v2/global/en/home.html',
-        logo_url: null,
-        headquarters_location: 'Redmond, WA',
-        roles: [
-            { role_id: 1, title: 'Software Engineer Co-op', area: 'Engineering', relevant_majors: ['Computer Science'] },
-            { role_id: 2, title: 'UI/UX Design Co-op', area: 'Design', relevant_majors: ['Design', 'Psychology', 'Computer Science'] },
-            { role_id: 3, title: 'Product Management Co-op', area: 'Business', relevant_majors: ['Business', 'Computer Science'] }
-        ],
-        faqs: [
-            {
-                faq_id: 1,
-                question: 'What is the interview process like for co-op positions?',
-                answer: 'The process typically includes an online assessment, followed by 1-2 technical interviews and a behavioral interview with the hiring team.'
-            },
-            {
-                faq_id: 2,
-                question: 'Are co-ops paid?',
-                answer: 'Yes, all Microsoft co-op positions are paid and include housing stipends for those relocating.'
-            },
-            {
-                faq_id: 3,
-                question: 'What skills are most important for the Software Engineer Co-op?',
-                answer: 'Strong fundamentals in data structures and algorithms, proficiency in at least one programming language, and experience with collaborative development workflows.'
-            }
-        ],
-        created_at: new Date('2025-03-15'),
-        updated_at: new Date('2025-03-21')
-    },
-    {
-        company_id: 2,
-        name: 'Boston Consulting Group',
-        industry: 'Consulting',
-        description: 'Global management consulting firm partnering with leaders in business and society to tackle their most important challenges.',
-        careers_page_url: 'https://careers.bcg.com/global/en/',
-        logo_url: null,
-        headquarters_location: 'Boston, Massachusetts',
-        roles: [
-            { role_id: 1, title: 'Accounting Co-op', area: 'Business', relevant_majors: ['Accounting', 'Finance'] },
-            { role_id: 2, title: 'Management Consultant Co-op', area: 'Business', relevant_majors: ['Economics', 'Accounting', 'Finance'] }
-        ],
-        faqs: [
-            {
-                faq_id: 1,
-                question: 'What does a typical day look like for a co-op at BCG?',
-                answer: 'Co-ops work alongside full-time consultants on active client cases, contributing to research, data analysis, and slide preparation.'
-            },
-            {
-                faq_id: 2,
-                question: 'Do I need a business background to apply?',
-                answer: 'Not necessarily -- BCG values analytical thinking and problem-solving skills across all majors, especially for data-heavy roles.'
-            }
-        ],
-        created_at: new Date('2025-01-10'),
-        updated_at: new Date('2025-01-27')
-    },
-    {
-        company_id: 3,
-        name: 'Insulet Corporation',
-        industry: 'Healthcare',
-        description: 'Medical device company that develops, manufactures, and sells the Omnipod Insulin Management System for people with diabetes.',
-        careers_page_url: 'https://insulet.wd5.myworkdayjobs.com/insuletcareers',
-        logo_url: null,
-        headquarters_location: 'Acton, Massachusetts',
-        roles: [
-            { role_id: 1, title: 'Electrical Engineering Co-op', area: 'Engineering', relevant_majors: ['Electrical Engineering'] },
-            { role_id: 2, title: 'Marketing Co-op', area: 'Marketing', relevant_majors: ['Marketing', 'Communications'] }
-        ],
-        faqs: [
-            {
-                faq_id: 1,
-                question: 'Is prior medical device experience required?',
-                answer: 'No prior medical device experience is required. Insulet provides onboarding and training for all co-op positions.'
-            },
-            {
-                faq_id: 2,
-                question: 'What tools or software will I use as an Electrical Engineering co-op?',
-                answer: 'Co-ops typically work with circuit design tools, embedded systems software, and internal lab equipment depending on the team.'
-            }
-        ],
-        created_at: new Date('2025-09-13'),
-        updated_at: new Date('2025-09-25')
-    }
-];
 
 // Helpers
-
-// find company by ID
-const findCompanyById = (companyId) => {
-    return companies.find(c => c.company_id === parseInt(companyId));
-};
 
 // extract and validate auth token 
 const authenticateToken = (req, res) => {
@@ -129,7 +31,7 @@ const authenticateToken = (req, res) => {
     return userId;
 };
 
-// extract user ID from mock token
+// extract user ID from mock token 
 const getUserIdFromToken = (token) => {
     if (!token || !token.startsWith('mock_jwt_')) {
         return null;
@@ -143,35 +45,56 @@ const getUserIdFromToken = (token) => {
 
 // Return the full overview for a specific company (description, roles, FAQs)
 // GET /companies/:companyId/overview
-router.get('/companies/:companyId/overview', (req, res) => {
+router.get('/companies/:companyId/overview', async (req, res) => {
     try {
         const userId = authenticateToken(req, res);
         if (!userId) {
             return;
         }
 
-        const company = findCompanyById(req.params.companyId);
+        const { companyId } = req.params;
 
-        if (!company) {
+        // fetch core company info
+        const { data: company, error: companyError } = await supabase
+            .from('Company')
+            .select('id, name, industry, description, overview, logo_url, careers_page_url, headquarters_location, website_url')
+            .eq('id', companyId)
+            .single();
+
+        if (companyError || !company) {
             return res.status(404).json({
                 success: false,
                 error: 'Company not found'
             });
         }
 
-        // return full overview: general info, roles, and FAQs
+        // fetch associated roles
+        const { data: roles, error: rolesError } = await supabase
+            .from('CompanyRole')
+            .select('id, title, description, area, relevant_majors, start_date, end_date, salary')
+            .eq('company_id', companyId);
+
+        if (rolesError) {
+            throw rolesError;
+        }
+
+        // fetch associated FAQs
+        const { data: faqs, error: faqsError } = await supabase
+            .from('CompanyFAQ')
+            .select('id, question, answer')
+            .eq('company_id', companyId);
+
+        if (faqsError) {
+            throw faqsError;
+        }
+
+        // return full overview
         res.status(200).json({
             success: true,
             data: {
-                company_id: company.company_id,
-                name: company.name,
-                industry: company.industry,
-                description: company.description,
-                headquarters_location: company.headquarters_location,
-                careers_page_url: company.careers_page_url,
-                logo_url: company.logo_url,
-                roles: company.roles,
-                faqs: company.faqs
+                ...company,
+                roles: roles || [],
+                faqs: faqs || []
             }
         });
 
@@ -187,28 +110,45 @@ router.get('/companies/:companyId/overview', (req, res) => {
 
 // Return only the roles offered by a specific company
 // GET /companies/:companyId/roles
-router.get('/companies/:companyId/roles', (req, res) => {
+router.get('/companies/:companyId/roles', async (req, res) => {
     try {
         const userId = authenticateToken(req, res);
         if (!userId) {
             return;
         }
 
-        const company = findCompanyById(req.params.companyId);
+        const { companyId } = req.params;
 
-        if (!company) {
+        // verify company exists
+        const { data: company, error: companyError } = await supabase
+            .from('Company')
+            .select('id, name')
+            .eq('id', companyId)
+            .single();
+
+        if (companyError || !company) {
             return res.status(404).json({
                 success: false,
                 error: 'Company not found'
             });
         }
 
+        // fetch roles for this company
+        const { data: roles, error: rolesError } = await supabase
+            .from('CompanyRole')
+            .select('id, title, description, area, relevant_majors, start_date, end_date, salary')
+            .eq('company_id', companyId);
+
+        if (rolesError) {
+            throw rolesError;
+        }
+
         res.status(200).json({
             success: true,
             data: {
-                company_id: company.company_id,
+                company_id: company.id,
                 company_name: company.name,
-                roles: company.roles
+                roles: roles || []
             }
         });
 
@@ -224,28 +164,45 @@ router.get('/companies/:companyId/roles', (req, res) => {
 
 // Return only the FAQs for a specific company
 // GET /companies/:companyId/faqs
-router.get('/companies/:companyId/faqs', (req, res) => {
+router.get('/companies/:companyId/faqs', async (req, res) => {
     try {
         const userId = authenticateToken(req, res);
         if (!userId) {
             return;
         }
 
-        const company = findCompanyById(req.params.companyId);
+        const { companyId } = req.params;
 
-        if (!company) {
+        // verify company exists
+        const { data: company, error: companyError } = await supabase
+            .from('Company')
+            .select('id, name')
+            .eq('id', companyId)
+            .single();
+
+        if (companyError || !company) {
             return res.status(404).json({
                 success: false,
                 error: 'Company not found'
             });
         }
 
+        // fetch FAQs for this company
+        const { data: faqs, error: faqsError } = await supabase
+            .from('CompanyFAQ')
+            .select('id, question, answer')
+            .eq('company_id', companyId);
+
+        if (faqsError) {
+            throw faqsError;
+        }
+
         res.status(200).json({
             success: true,
             data: {
-                company_id: company.company_id,
+                company_id: company.id,
                 company_name: company.name,
-                faqs: company.faqs
+                faqs: faqs || []
             }
         });
 
@@ -259,30 +216,229 @@ router.get('/companies/:companyId/faqs', (req, res) => {
 });
 
 
-// Company group membership endpoints
-// These are structured around the Group and Group_Member schema -- 
-// swap mock data logic for Supabase queries once the database is connected
+// Company follow endpoints
+// Uses the CompanyFollow table -- tracks which users are following which companies
 
-// Join a company's group
-// POST /companies/:companyId/join
-router.post('/companies/:companyId/join', async (req, res) => {
+// Follow a company
+// POST /companies/:companyId/follow
+router.post('/companies/:companyId/follow', async (req, res) => {
     try {
         const userId = authenticateToken(req, res);
         if (!userId) {
             return;
         }
 
-        const companyId = parseInt(req.params.companyId);
-        const company = findCompanyById(companyId);
+        const { companyId } = req.params;
 
-        if (!company) {
+        // verify company exists
+        const { data: company, error: companyError } = await supabase
+            .from('Company')
+            .select('id, name')
+            .eq('id', companyId)
+            .single();
+
+        if (companyError || !company) {
             return res.status(404).json({
                 success: false,
                 error: 'Company not found'
             });
         }
 
-        // look up the Group row that corresponds to this company
+        // check if user is already following this company
+        const { data: existing } = await supabase
+            .from('CompanyFollow')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('company_id', companyId)
+            .single();
+
+        if (existing) {
+            return res.status(409).json({
+                success: false,
+                error: 'User is already following this company'
+            });
+        }
+
+        // insert new follow record
+        const { data: follow, error: insertError } = await supabase
+            .from('CompanyFollow')
+            .insert({ user_id: userId, company_id: companyId })
+            .select()
+            .single();
+
+        if (insertError) {
+            throw insertError;
+        }
+
+        res.status(201).json({
+            success: true,
+            message: `Successfully followed ${company.name}`,
+            data: {
+                follow
+            }
+        });
+
+    } catch (error) {
+        console.error('Follow company error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error while following company'
+        });
+    }
+});
+
+
+// Unfollow a company
+// DELETE /companies/:companyId/unfollow
+router.delete('/companies/:companyId/unfollow', async (req, res) => {
+    try {
+        const userId = authenticateToken(req, res);
+        if (!userId) {
+            return;
+        }
+
+        const { companyId } = req.params;
+
+        // verify company exists
+        const { data: company, error: companyError } = await supabase
+            .from('Company')
+            .select('id, name')
+            .eq('id', companyId)
+            .single();
+
+        if (companyError || !company) {
+            return res.status(404).json({
+                success: false,
+                error: 'Company not found'
+            });
+        }
+
+        // check if the user is actually following before trying to remove
+        const { data: existing } = await supabase
+            .from('CompanyFollow')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('company_id', companyId)
+            .single();
+
+        if (!existing) {
+            return res.status(404).json({
+                success: false,
+                error: 'User is not following this company'
+            });
+        }
+
+        // delete the follow record
+        const { error: deleteError } = await supabase
+            .from('CompanyFollow')
+            .delete()
+            .eq('user_id', userId)
+            .eq('company_id', companyId);
+
+        if (deleteError) {
+            throw deleteError;
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Successfully unfollowed ${company.name}`
+        });
+
+    } catch (error) {
+        console.error('Unfollow company error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error while unfollowing company'
+        });
+    }
+});
+
+
+// Return all followers of a specific company
+// GET /companies/:companyId/followers
+router.get('/companies/:companyId/followers', async (req, res) => {
+    try {
+        const userId = authenticateToken(req, res);
+        if (!userId) {
+            return;
+        }
+
+        const { companyId } = req.params;
+
+        // verify company exists
+        const { data: company, error: companyError } = await supabase
+            .from('Company')
+            .select('id, name')
+            .eq('id', companyId)
+            .single();
+
+        if (companyError || !company) {
+            return res.status(404).json({
+                success: false,
+                error: 'Company not found'
+            });
+        }
+
+        // fetch all followers, joining with User to get profile info
+        const { data: followers, error: followersError } = await supabase
+            .from('CompanyFollow')
+            .select('id, created_at, User(id, first_name, last_name, email, user_role)')
+            .eq('company_id', companyId);
+
+        if (followersError) {
+            throw followersError;
+        }
+
+        res.status(200).json({
+            success: true,
+            data: {
+                company_id: company.id,
+                company_name: company.name,
+                follower_count: followers.length,
+                followers
+            }
+        });
+
+    } catch (error) {
+        console.error('Get company followers error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error while fetching company followers'
+        });
+    }
+});
+
+
+// Company group endpoints
+// Uses Group and Group_Member tables -- distinct from following a company.
+// Each company has an associated Group row that users can join to prep together.
+
+// Join a company's prep group
+// POST /companies/:companyId/group/join
+router.post('/companies/:companyId/group/join', async (req, res) => {
+    try {
+        const userId = authenticateToken(req, res);
+        if (!userId) {
+            return;
+        }
+
+        const { companyId } = req.params;
+
+        // verify company exists
+        const { data: company, error: companyError } = await supabase
+            .from('Company')
+            .select('id, name')
+            .eq('id', companyId)
+            .single();
+
+        if (companyError || !company) {
+            return res.status(404).json({
+                success: false,
+                error: 'Company not found'
+            });
+        }
+
+        // look up the Group row associated with this company
         const { data: group, error: groupError } = await supabase
             .from('Group')
             .select('id')
@@ -292,12 +448,12 @@ router.post('/companies/:companyId/join', async (req, res) => {
         if (groupError || !group) {
             return res.status(404).json({
                 success: false,
-                error: 'No group found for this company'
+                error: 'No prep group found for this company'
             });
         }
 
-        // check if the user is already a member
-        const { data: existing, error: existingError } = await supabase
+        // check if user is already a member of this group
+        const { data: existing } = await supabase
             .from('Group_Member')
             .select('id')
             .eq('user_id', userId)
@@ -312,7 +468,7 @@ router.post('/companies/:companyId/join', async (req, res) => {
         }
 
         // insert new membership record
-        const { data: newMember, error: insertError } = await supabase
+        const { data: membership, error: insertError } = await supabase
             .from('Group_Member')
             .insert({ group_id: group.id, user_id: userId, joined_at: new Date() })
             .select()
@@ -324,9 +480,9 @@ router.post('/companies/:companyId/join', async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: `Successfully joined ${company.name}'s group`,
+            message: `Successfully joined ${company.name}'s prep group`,
             data: {
-                membership: newMember
+                membership
             }
         });
 
@@ -340,26 +496,32 @@ router.post('/companies/:companyId/join', async (req, res) => {
 });
 
 
-// Leave a company's group
-// DELETE /companies/:companyId/leave
-router.delete('/companies/:companyId/leave', async (req, res) => {
+// Leave a company's prep group
+// DELETE /companies/:companyId/group/leave
+router.delete('/companies/:companyId/group/leave', async (req, res) => {
     try {
         const userId = authenticateToken(req, res);
         if (!userId) {
             return;
         }
 
-        const companyId = parseInt(req.params.companyId);
-        const company = findCompanyById(companyId);
+        const { companyId } = req.params;
 
-        if (!company) {
+        // verify company exists
+        const { data: company, error: companyError } = await supabase
+            .from('Company')
+            .select('id, name')
+            .eq('id', companyId)
+            .single();
+
+        if (companyError || !company) {
             return res.status(404).json({
                 success: false,
                 error: 'Company not found'
             });
         }
 
-        // look up the Group row that corresponds to this company
+        // look up the Group row associated with this company
         const { data: group, error: groupError } = await supabase
             .from('Group')
             .select('id')
@@ -369,12 +531,12 @@ router.delete('/companies/:companyId/leave', async (req, res) => {
         if (groupError || !group) {
             return res.status(404).json({
                 success: false,
-                error: 'No group found for this company'
+                error: 'No prep group found for this company'
             });
         }
 
         // check if the user is actually a member before trying to remove them
-        const { data: existing, error: existingError } = await supabase
+        const { data: existing } = await supabase
             .from('Group_Member')
             .select('id')
             .eq('user_id', userId)
@@ -401,7 +563,7 @@ router.delete('/companies/:companyId/leave', async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: `Successfully left ${company.name}'s group`
+            message: `Successfully left ${company.name}'s prep group`
         });
 
     } catch (error) {
@@ -414,26 +576,32 @@ router.delete('/companies/:companyId/leave', async (req, res) => {
 });
 
 
-// Return all members of a specific company's group
-// GET /companies/:companyId/members
-router.get('/companies/:companyId/members', async (req, res) => {
+// Return all members of a company's prep group
+// GET /companies/:companyId/group/members
+router.get('/companies/:companyId/group/members', async (req, res) => {
     try {
         const userId = authenticateToken(req, res);
         if (!userId) {
             return;
         }
 
-        const companyId = parseInt(req.params.companyId);
-        const company = findCompanyById(companyId);
+        const { companyId } = req.params;
 
-        if (!company) {
+        // verify company exists
+        const { data: company, error: companyError } = await supabase
+            .from('Company')
+            .select('id, name')
+            .eq('id', companyId)
+            .single();
+
+        if (companyError || !company) {
             return res.status(404).json({
                 success: false,
                 error: 'Company not found'
             });
         }
 
-        // look up the Group row that corresponds to this company
+        // look up the Group row associated with this company
         const { data: group, error: groupError } = await supabase
             .from('Group')
             .select('id')
@@ -443,11 +611,11 @@ router.get('/companies/:companyId/members', async (req, res) => {
         if (groupError || !group) {
             return res.status(404).json({
                 success: false,
-                error: 'No group found for this company'
+                error: 'No prep group found for this company'
             });
         }
 
-        // fetch all members of the group, joining with User to get profile info
+        // fetch all members, joining with User to get profile info
         const { data: members, error: membersError } = await supabase
             .from('Group_Member')
             .select('id, joined_at, User(id, first_name, last_name, email, user_role)')
@@ -460,15 +628,16 @@ router.get('/companies/:companyId/members', async (req, res) => {
         res.status(200).json({
             success: true,
             data: {
-                company_id: companyId,
+                company_id: company.id,
                 company_name: company.name,
+                group_id: group.id,
                 member_count: members.length,
                 members
             }
         });
 
     } catch (error) {
-        console.error('Get company members error:', error);
+        console.error('Get company group members error:', error);
         res.status(500).json({
             success: false,
             error: 'Internal server error while fetching company group members'
@@ -476,4 +645,4 @@ router.get('/companies/:companyId/members', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
