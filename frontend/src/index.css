@@ -26,6 +26,8 @@
   --color-voicecall-bg: var(--voicecall);
   --color-voicetopbar: var(--voice-topbar);
   --color-voiceuserprofiles: cvar(--voice-userprofiles);
+  --color-black: oklch(0, 0, 0);
+  --color-white: oklch(1, 0, 0);
   
 }
 
@@ -63,19 +65,19 @@
 
 @layer onboarding-btns {
   .title {
-    @apply text-color-black text-4x1 font-fredoka;
+    @apply text-black text-4xl font-fredoka;
   }
   .display-name {
-    @apply text-color-black text-lg font-fredoka;
+    @apply text-black text-lg font-fredoka;
   }
   .email {
-    @apply text-color-black text-lg font-fredoka;
+    @apply text-black text-lg font-fredoka;
   }
   .password {
-    @apply text-color-black text-lg font-fredoka;
+    @apply text-black text-lg font-fredoka;
   }
   .proceed-btn {
-    @apply text-color-white text-base font-fredoka;
+    @apply text-white text-base font-fredoka;
   }
   
 }
@@ -83,42 +85,42 @@
 
 @layer landing-page-btns {
   .todo-header {
-    @apply text-color-black text-3x1 font-fredoka;
+    @apply text-black text-3xl font-fredoka;
   }
   .group-header {
-    @apply text-color-black text-sm font-spacegrotesk;
+    @apply text-black text-sm font-spacegrotesk;
   }
   .todo-info {
-    @apply text-color-black text-sm font-fredoka;
+    @apply text-black text-sm font-fredoka;
   }
   .sidebar-options {
-    @apply text-color-white text-base font-fredoka;
+    @apply text-white text-base font-fredoka;
   }
   .username {
-    @apply text-color-white text-2x1 font-spacegrotesk;
+    @apply text-white text-2xl font-spacegrotesk;
   }
 }
 
 @layer account-settings-btns {
   .title {
-    @apply text-color-black text-5x1 font-spacegrotesk font-bold;
+    @apply text-black text-5xl font-spacegrotesk font-bold;
   }
   .headers {
-    @apply text-color-black text-4x1 font-spacegrotesk font-bold;
+    @apply text-black text-4xl font-spacegrotesk font-bold;
   }
   .info-labels {
-    @apply text-color-black text-2x1 font-spacegrotesk;
+    @apply text-black text-2xl font-spacegrotesk;
   }
   .user-info {
-    @apply text-color-black text-2x1 font-spacegrotesk font-bold;
+    @apply text-black text-2xl font-spacegrotesk font-bold;
   }
 }
 
 @layer voice-call {
   .usernames {
-    @apply text-color-white text-lg font-fredoka;
+    @apply text-white text-lg font-fredoka;
   }
   .timer {
-    @apply text-color-white text-lg font-fredoka;
+    @apply text-white text-lg font-fredoka;
   }
 }
