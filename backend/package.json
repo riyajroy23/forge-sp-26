@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "description": "",
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.97.0",
     "cors": "^2.8.6",
