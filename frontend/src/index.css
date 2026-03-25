@@ -3,7 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ================= ROOT ================= */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -63,7 +62,6 @@
   --sidebar-ring: oklch(0.705 0.015 286.067);
 }
 
-/* ================= THEME ================= */
 @theme inline {
   /* fonts */
   --font-fredoka: 'Fredoka', system-ui, fredoka-font;
@@ -136,7 +134,7 @@
   --color-voiceuserprofiles: var(--voice-userprofiles);
 }
 
-/* ================= BASE ELEMENTS ================= */
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -178,7 +176,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-/* ================= LIGHT MODE ================= */
+/* Light mode */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -192,9 +190,7 @@ button:focus-visible {
   }
 }
 
-/* ================= COMPONENTS ================= */
 @layer components {
-  /* Onboarding */
   .title {
     @apply text-[var(--color-black)] text-4xl font-fredoka;
   }
@@ -209,7 +205,6 @@ button:focus-visible {
     @apply text-[var(--color-white)] text-base font-fredoka;
   }
 
-  /* Landing */
   .todo-header {
     @apply text-[var(--color-black)] text-3xl font-fredoka;
   }
@@ -230,7 +225,6 @@ button:focus-visible {
     @apply text-[var(--color-white)] text-2xl font-spacegrotesk;
   }
 
-  /* Settings */
   .settings-title {
     @apply text-[var(--color-black)] text-5xl font-spacegrotesk font-bold;
   }
@@ -247,14 +241,13 @@ button:focus-visible {
     @apply text-[var(--color-black)] text-2xl font-spacegrotesk font-bold;
   }
 
-  /* Voice Call */
   .usernames,
   .timer {
     @apply text-[var(--color-white)] text-lg font-fredoka;
   }
 }
 
-/* ================= DARK MODE ================= */
+/* Dark Mode */
 .dark {
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
@@ -276,7 +269,7 @@ button:focus-visible {
   --ring: oklch(0.552 0.016 285.938);
 }
 
-/* ================= BASE LAYER ================= */
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
