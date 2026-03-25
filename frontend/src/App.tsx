@@ -1,56 +1,64 @@
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import LaunchScreen from './components/LaunchScreen'
-import SignupPage from './components/SignupPage'
-import SigninPage from './components/SigninPage'
-import './App.css'
+import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
-function App() {
-    const [count, setCount] = useState(0)
-    const [showLaunch, setShowLaunch] = useState(true)
-    const [currentPage, setCurrentPage] = useState<'signup' | 'signin' | 'main'>('signup')
+import UserSetup from "./Pages/user-setup";
+import ProfilePage from "./Pages/profile_page";
+import CompanyOverviewPage from "./Pages/company_overview";
 
-    // If launch screen is showing, show it - audrey
-    if (showLaunch) {
-        return <LaunchScreen onFinish={() => setShowLaunch(false)} duration={2000} />
-    }
+import LaunchScreen from "./components/LaunchScreen";
+import SignupPage from "./components/SignupPage";
+import SigninPage from "./components/SigninPage";
 
-    // After launch screen, show the current page - audrey
-    if (currentPage === 'signup') {
-        return <SignupPage onNavigateToSignin={() => setCurrentPage('signin')} />
-    }
+import { Button } from "@/components/ui/button";
 
-    // If user presses sign in link, show sign in page - audrey
-    if (currentPage === 'signin') {
-        return <SigninPage onNavigateToSignup={() => setCurrentPage('signup')} />
-    }
+export default function App() {
+  const [showLaunch, setShowLaunch] = useState(true);
 
-    return (
-        <>
-            <div>
-                <a href="https://vite.dev" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://react.dev" target="_blank">
-                    <img src={reactLogo} className="logo react" alt="React logo" />
-                </a>
-            </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <div className="flex pb-5 flex-col items-center justify-center">
-                    <Button>Shadcn Button</Button>
-                </div>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to test HMR
-                </p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
-        </>
-    )
+  // auto-hide launch screen after duration
+  useEffect(() => {
+    const timer = setTimeout(() => setShowLaunch(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // show launch screen first
+  if (showLaunch) {
+    return <LaunchScreen onFinish={() => setShowLaunch(false)} duration={2000} />;
+  }
+
+  return (
+    <div className="p-6 space-y-4">
+      {/* Navigation (you can remove later) */}
+      <div className="space-x-2">
+        <Link to="/setup">
+          <Button>User Setup</Button>
+        </Link>
+        <Link to="/profile">
+          <Button>Profile</Button>
+        </Link>
+        <Link to="/company/1">
+          <Button>Company</Button>
+        </Link>
+        <Link to="/signup">
+          <Button>Signup</Button>
+        </Link>
+        <Link to="/signin">
+          <Button>Signin</Button>
+        </Link>
+      </div>
+
+      <Routes>
+        {/* Auth routes */}
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/signin" element={<SigninPage />} />
+
+        {/* Main app routes */}
+        <Route path="/setup" element={<UserSetup />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/company/:id" element={<CompanyOverviewPage />} />
+
+        {/* Default redirect */}
+        <Route path="*" element={<Navigate to="/signup" />} />
+      </Routes>
+    </div>
+  );
 }
-
-export default App

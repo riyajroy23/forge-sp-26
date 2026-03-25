@@ -1,21 +1,22 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import recoopLogo from '../assets/images/recoop-logo2.png';
 import './SignupPage.css';
 
-interface SignupPageProps {
-    onNavigateToSignin: () => void;
-}
+const SignupPage = () => {
+    const navigate = useNavigate();
 
-const SignupPage = ({ onNavigateToSignin }: SignupPageProps) => {
     const [displayName, setDisplayName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSignup = (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle signup logic here later - audrey
+
         console.log('Signup:', { displayName, email, password });
+
+        navigate("/setup");
     };
 
     return (
@@ -63,8 +64,12 @@ const SignupPage = ({ onNavigateToSignin }: SignupPageProps) => {
                         Sign up
                     </Button>
                 </form>
+
                 <p className="signin-link">
-                    Already have an account? <a onClick={onNavigateToSignin} style={{ cursor: 'pointer' }}>Sign In</a>
+                    Already have an account?{" "}
+                    <a onClick={() => navigate("/signin")} style={{ cursor: 'pointer' }}>
+                        Sign In
+                    </a>
                 </p>
             </div>
         </div>
