@@ -291,3 +291,5 @@ let nextUserId = 3;
       });
     }
   });
+
+  export default router;
