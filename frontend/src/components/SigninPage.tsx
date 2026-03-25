@@ -1,20 +1,20 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import recoopLogo from '../assets/images/recoop-logo2.png';
 import './SigninPage.css';
 
-interface SigninPageProps {
-    onNavigateToSignup: () => void;
-}
+const SigninPage = () => {
+    const navigate = useNavigate();
 
-const SigninPage = ({ onNavigateToSignup }: SigninPageProps) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSignin = (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle signin logic here - audrey
         console.log('Sign in:', { email, password });
+
+        navigate("/setup");
     };
 
     return (
@@ -51,8 +51,12 @@ const SigninPage = ({ onNavigateToSignup }: SigninPageProps) => {
                         Log in
                     </Button>
                 </form>
+
                 <p className="signup-link">
-                    Don't have an account? <a onClick={onNavigateToSignup} style={{ cursor: 'pointer' }}>Sign Up</a>
+                    Don't have an account?{" "}
+                    <a onClick={() => navigate("/signup")} style={{ cursor: 'pointer' }}>
+                        Sign Up
+                    </a>
                 </p>
             </div>
         </div>
