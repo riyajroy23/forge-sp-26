@@ -1,6 +1,8 @@
 import { Routes, Route, Link, Navigate } from "react-router-dom";
-import UserSetup from "./pages/user-setup";
-import ProfilePage from "./pages/profile_page";
+import UserSetup from "./Pages/user-setup";
+import ProfilePage from "./Pages/profile_page";
+import CompanyMsgBoard from "./Pages/company_msg_board";
+import CompanyPost from "./Pages/company_post";
 import { Button } from "@/components/ui/button";
 
 export default function App() {
@@ -13,12 +15,20 @@ export default function App() {
         <Link to="/profile">
           <Button>Profile</Button>
         </Link>
+        <Link to="/company_msgboard">
+          <Button>Company Message Board</Button>
+        </Link>
+        <Link to="/companypost">
+          <Button>Post Replies</Button>
+        </Link>
       </div>
 
       <Routes>
         <Route path="*" element={<Navigate to="/setup" />} />
         <Route path="/setup" element={<UserSetup />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/company_msgboard" element={<CompanyMsgBoard />} />
+        <Route path="/companypost" element={<CompanyPost />} />
       </Routes>
     </div>
   );
