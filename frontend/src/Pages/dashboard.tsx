@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 
-const ProfilePage = () => {
+const Dashboard = () => {
   return (
       <div className="mt-10 grid grid-cols-2 gap-10 w-[520px]">
       
@@ -12,5 +12,5 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default Dashboard;
 

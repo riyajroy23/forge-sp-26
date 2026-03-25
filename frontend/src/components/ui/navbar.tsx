@@ -21,16 +21,16 @@ export default function Navbar() {
 
       <div className="flex items-center">
         <Link to="/profile">
-          <img src={logo} alt="MyApp Logo" className="h-11 w-auto" style={{imageRendering: "crisp-edges"}} />
+          <img src={logo} alt="MyApp Logo" className="pl-3 h-20 w-auto" style={{imageRendering: "crisp-edges"}} />
         </Link>
       </div>
 
-      <div className="flex items-center gap-3 ml-auto">
+      <div className="flex items-center gap-3 ml-auto h-10">
         {navButtons.map(({ label, icon, to }) => (
           <Link key={label} to={to}>
             <Button
               variant="outline"
-            className="flex items-center gap-2 rounded-full border border-white/30 bg-transparent hover:bg-gray-800 px-4 py-2 text-sm"
+            className="flex items-center gap-2 rounded-full border border-white/30 bg-[#1a1a1a] hover:bg-gray-800 px-4 py-2 text-sm"
               style={{ color: "white" }}
             >
               <img src={icon} alt={label} className="h-4 w-4" />
@@ -40,9 +40,9 @@ export default function Navbar() {
         ))}
       
 
-        <Link to="/" className="flex items-center gap-3">
-        <span style={{color: "white"}} className="text-sm font-medium">Hi, Becky!</span>
-        <div className="w-10 h-10 rounded-full bg-gray-500" />  </Link>
+        <Link to="/" className="flex items-center gap-3 px-10">
+        <span style={{color: "white"}} className="text-lg pr-2">Hi, Riya!</span>
+        <div className="w-15 h-15 rounded-full bg-gray-500" />  </Link>
       </div>
     </nav>
    
