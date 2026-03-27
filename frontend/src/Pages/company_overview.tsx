@@ -2,9 +2,15 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Heart, Search, ChevronDown, ArrowLeft, BarChart2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  ButtonGroup,
+  ButtonGroupSeparator,
+  ButtonGroupText,
+} from "@/components/ui/button-group";
 import { cn } from "@/lib/utils";
 import RoleCard from "@/components/RoleCard";
 import FAQItem from "@/components/FAQItem";
+import { Button } from "@/components/ui/button";
 
 export default function CompanyOverviewPage() {
   const { id = "1" } = useParams<{ id: string }>();
@@ -88,6 +94,14 @@ export default function CompanyOverviewPage() {
               <span className="text-xs text-blue-800 font-semibold font-[var(--font-spacegrotesk)]">
                 Alumni who work here
               </span>
+            </div>
+
+            {/* People + Interview Button Bar*/}
+            <div className ="mt-4 flex flex-wrap gap-3">
+              <ButtonGroup>
+                <Button>People</Button>
+                <Button>Interviews</Button>
+              </ButtonGroup>
             </div>
           </div>
         </CardContent>
