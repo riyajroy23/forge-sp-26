@@ -2,11 +2,8 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Heart, Search, ChevronDown, ArrowLeft, BarChart2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  ButtonGroup,
-  ButtonGroupSeparator,
-  ButtonGroupText,
-} from "@/components/ui/button-group";
+import {ButtonGroup,} from "@/components/ui/button-group";
+import {Table} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import RoleCard from "@/components/RoleCard";
 import FAQItem from "@/components/FAQItem";
@@ -21,12 +18,21 @@ export default function CompanyOverviewPage() {
   const [majorFilter, setMajorFilter] = useState("All Majors");
   const [search, setSearch] = useState("");
   const [majorDropdownOpen, setMajorDropdownOpen] = useState(false);
+  const [peopleDropdownOpen, setPeopleDropdownOpen] = useState(false);
+  const [peopleFilter, setPeopleFilter] = useState("Alumni");
+  const [activeTab, setActiveTab] = useState<"main" | "people" | "interviews">("main");
 
   const filteredRoles = company.roles.filter(r => {
     const matchesMajor = majorFilter === "All Majors" || r.majors.includes(majorFilter);
     const matchesSearch = r.title.toLowerCase().includes(search.toLowerCase());
     return matchesMajor && matchesSearch;
-  });
+  }
+  const filteredPeople = company.people.filter(p => {
+    const matchesStatus = peopleFilter === "All" || p.status === peopleFilter;
+    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+    return matchesStatus && matchesSearch;
+  }
+);
 
   return (
     // Clicking anywhere outside the dropdown closes it
@@ -96,115 +102,227 @@ export default function CompanyOverviewPage() {
               </span>
             </div>
 
-            {/* People + Interview Button Bar*/}
-            <div className ="mt-4 flex flex-wrap gap-3">
+            {/* Main + People + Interview Button Bar*/}
+            <div className="mt-4 flex flex-wrap gap-3">
               <ButtonGroup>
-                <Button>People</Button>
-                <Button>Interviews</Button>
+                  <Button
+                    onClick={() => setActiveTab("main")}
+                    variant={activeTab === "main" ? "default" : "outline"}
+                  >
+                    Main
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("people")}
+                    variant={activeTab === "people" ? "default" : "outline"}
+                  >
+                    People
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("interviews")}
+                    variant={activeTab === "interviews" ? "default" : "outline"}
+                  >
+                    Interviews
+                  </Button>
               </ButtonGroup>
-            </div>
+          </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* ── Overview ─────────────────────────────────────────────────────── */}
-      <section className="mb-6">
-        <h2 className="headers text-xl mb-3">Overview</h2>
-        <Card className="rounded-xl border-0 shadow-sm bg-white">
-          <CardContent className="p-6">
-            <p className="text-sm text-gray-700 leading-relaxed font-[var(--font-spacegrotesk)]">
-              {company.overview}
-            </p>
-          </CardContent>
-        </Card>
-      </section>
+      {activeTab === "main" && (
+        <>
+          {/* ── Overview ─────────────────────────────────────────────────────── */}
+          <section className="mb-6">
+            <h2 className="headers text-xl mb-3">Overview</h2>
+            <Card className="rounded-xl border-0 shadow-sm bg-white">
+              <CardContent className="p-6">
+                <p className="text-sm text-gray-700 leading-relaxed font-[var(--font-spacegrotesk)]">
+                  {company.overview}
+                </p>
+              </CardContent>
+            </Card>
+          </section>
 
-      {/* ── Roles offered ────────────────────────────────────────────────── */}
-      <section className="mb-6">
-        <h2 className="headers text-xl mb-3">Roles offered</h2>
-        <Card className="rounded-xl border-0 shadow-sm bg-white">
-          <CardContent className="p-6 flex flex-col gap-3">
-
-            {/* Search bar */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md
-                           font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
-                           focus:ring-[var(--color-darkred)]/40"
-              />
-            </div>
-
-            {/* Major filter dropdown — stopPropagation keeps the outside-click handler from firing inside */}
-            <div className="relative w-44" onClick={e => e.stopPropagation()}>
-              <button
-                onClick={() => setMajorDropdownOpen(o => !o)}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-200
-                           rounded-md bg-white font-[var(--font-spacegrotesk)] hover:bg-gray-50
-                           transition w-full justify-between"
-              >
-                <span className="truncate">{majorFilter}</span>
-                <ChevronDown className={cn("w-3.5 h-3.5 text-gray-500 shrink-0 transition-transform", majorDropdownOpen && "rotate-180")} />
-              </button>
-
-              {majorDropdownOpen && (
-                <div className="absolute left-0 top-full mt-1 w-56 z-50
-                                bg-white border border-gray-200 rounded-md
-                                shadow-xl max-h-60 overflow-y-auto">
-                  {ALL_MAJORS.map(m => (
-                    <button
-                      key={m}
-                      onClick={() => { setMajorFilter(m); setMajorDropdownOpen(false); }}
-                      className={cn(
-                        "w-full text-left px-4 py-2 text-sm font-[var(--font-spacegrotesk)]",
-                        "hover:bg-gray-50 transition",
-                        m === majorFilter && "font-semibold text-[var(--color-darkred)]"
-                      )}
-                    >
-                      {m}
-                    </button>
-                  ))}
+          {/* ── Roles offered ────────────────────────────────────────────────── */}
+          <section className="mb-6">
+            <h2 className="headers text-xl mb-3">Roles offered</h2>
+            <Card className="rounded-xl border-0 shadow-sm bg-white">
+              <CardContent className="p-6 flex flex-col gap-3">
+                {/* Search bar */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md
+                               font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
+                               focus:ring-[var(--color-darkred)]/40"
+                  />
                 </div>
-              )}
-            </div>
 
-            {/* Role list */}
-            <div className="flex flex-col gap-3">
-              {filteredRoles.length > 0
-                ? filteredRoles.map(r => <RoleCard key={r.id} role={r} />)
-                : (
-                  <p className="text-sm text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
-                    No roles match your filters.
-                  </p>
-                )}
-            </div>
-          </CardContent>
-        </Card>
-      </section>
+                {/* Major filter dropdown */}
+                <div className="relative w-44" onClick={e => e.stopPropagation()}>
+                  <button
+                    onClick={() => setMajorDropdownOpen(o => !o)}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-200
+                               rounded-md bg-white font-[var(--font-spacegrotesk)] hover:bg-gray-50
+                               transition w-full justify-between"
+                  >
+                    <span className="truncate">{majorFilter}</span>
+                    <ChevronDown
+                      className={cn(
+                        "w-3.5 h-3.5 text-gray-500 shrink-0 transition-transform",
+                        majorDropdownOpen && "rotate-180"
+                      )}
+                    />
+                  </button>
 
-      {/* ── FAQs ─────────────────────────────────────────────────────────── */}
-      <section className="mb-8">
-        <h2 className="headers text-xl mb-3">FAQs</h2>
-        <Card className="rounded-xl border-0 shadow-sm bg-white">
-          <CardContent className="px-6 py-2">
-            {company.faqs.map((faq, i) => (
-              <FAQItem key={i} question={faq.question} answer={faq.answer} />
-            ))}
-          </CardContent>
-        </Card>
-      </section>
+                  {majorDropdownOpen && (
+                    <div className="absolute left-0 top-full mt-1 w-56 z-50
+                                    bg-white border border-gray-200 rounded-md
+                                    shadow-xl max-h-60 overflow-y-auto">
+                      {ALL_MAJORS.map(m => (
+                        <button
+                          key={m}
+                          onClick={() => {
+                            setMajorFilter(m);
+                            setMajorDropdownOpen(false);
+                          }}
+                          className={cn(
+                            "w-full text-left px-4 py-2 text-sm font-[var(--font-spacegrotesk)]",
+                            "hover:bg-gray-50 transition",
+                            m === majorFilter && "font-semibold text-[var(--color-darkred)]"
+                          )}
+                        >
+                          {m}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-        </div>
+                {/* Role list */}
+                <div className="flex flex-col gap-3">
+                  {filteredRoles.length > 0 ? (
+                    filteredRoles.map(r => <RoleCard key={r.id} role={r} />)
+                  ) : (
+                    <p className="text-sm text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
+                      No roles match your filters.
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* ── FAQs ─────────────────────────────────────────────────────────── */}
+          <section className="mb-8">
+            <h2 className="headers text-xl mb-3">FAQs</h2>
+            <Card className="rounded-xl border-0 shadow-sm bg-white">
+              <CardContent className="px-6 py-2">
+                {company.faqs.map((faq, i) => (
+                  <FAQItem key={i} question={faq.question} answer={faq.answer} />
+                ))}
+              </CardContent>
+            </Card>
+          </section>
+        </>
+      )}
+
+      {activeTab === "people" && (
+        <>
+          {/* ── People ────────────────────────────────────────────────── */}
+          <section className="mb-6">
+            <h2 className="headers text-xl mb-3">People</h2>
+            <Card className="rounded-xl border-0 shadow-sm bg-white">
+              <CardContent className="p-6 flex flex-col gap-3">
+                {/* Search bar */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search for person..."
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md
+                               font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
+                               focus:ring-[var(--color-darkred)]/40"
+                  />
+                </div>
+
+                {/* Status filter dropdown */}
+                <div className="relative w-44" onClick={e => e.stopPropagation()}>
+                  <button
+                    onClick={() => setPeopleDropdownOpen(o => !o)}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-200
+                               rounded-md bg-white font-[var(--font-spacegrotesk)] hover:bg-gray-50
+                               transition w-full justify-between"
+                  >
+                    <span className="truncate">{peopleFilter}</span>
+                    <ChevronDown
+                      className={cn(
+                        "w-3.5 h-3.5 text-white shrink-0 transition-transform",
+                        peopleDropdownOpen && "rotate-180"
+                      )}
+                    />
+                  </button>
+
+                  {peopleDropdownOpen && (
+                    <div className="absolute left-0 top-full mt-1 w-56 z-50
+                                    bg-white border border-gray-200 rounded-md
+                                    shadow-xl max-h-60 overflow-y-auto">
+                      {People_Filter.map(m => (
+                        <button
+                          key={m}
+                          onClick={() => {
+                            setPeopleFilter(m);
+                            setPeopleDropdownOpen(false);
+                          }}
+                          className={cn(
+                            "w-full text-left px-4 py-2 text-sm font-[var(--font-spacegrotesk)]",
+                            "hover:bg-gray-50 transition",
+                            m === peopleFilter && "font-semibold text-[var(--color-darkred)]"
+                          )}
+                        >
+                          {m}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Role list */}
+                <div className="flex flex-col gap-3">
+                  {filteredPeople.length > 0 ? (
+                    filteredPeople.map(p => <RoleCard key={p.name} role={p} />)
+                  ) : (
+                    <p className="text-sm text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
+                      No roles match your filters.
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+        </>
+      )}
+
       </div>
     </div>
+  </div>
   );
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
+export interface CompanyPeople {
+  name: string;
+  status: string;
+  role: string[];
+  id : string;
+}
+
 
 export interface Role {
   id: string;
@@ -322,3 +440,61 @@ function getMockCompany(_id: string): Company {
     ],
   };
 }
+const People_Filter =[
+  "Alumni",
+  "Current Co-op Students",
+  "Previous Co-op Students",
+  "Full-Time Employees",
+  "Part-Time Employees"
+];
+
+const People: CompanyPeople[] = [
+  {
+    id: "2934873",
+    name: "Alex Kim",
+    role: ["Software Engineer", "Senior Software Engineer"],
+    status: "Full-Time Employees",
+  },
+  {
+    id: "234325",
+    name: "Jordan Lee",
+    role: ["Data Analyst Co-op"],
+    status: "Current Co-op Students",
+  },
+  {
+    id: "9456743",
+    name: "Sam Rivera",
+    role: ["Product Manager", "Software Engineer Co-op"],
+    status: "Alumni",
+  },
+  {
+    id: "234634",
+    name: "Taylor Chen",
+    role: ["UX Designer Co-op"],
+    status: "Previous Co-op Students",
+  },
+  {
+    id: "111995",
+    name: "Morgan Patel",
+    role: ["QA Engineer", "QA Intern"],
+    status: "Part-Time Employees",
+  },
+  {
+    id: "p6",
+    name: "Chris Johnson",
+    role: ["Backend Engineer", "Systems Engineer"],
+    status: "Full-Time Employees",
+  },
+  {
+    id: "p7",
+    name: "Priya Singh",
+    role: ["Frontend Developer", "UI Engineer"],
+    status: "Full-Time Employees",
+  },
+  {
+    id: "p8",
+    name: "Daniel Garcia",
+    role: ["Marketing Co-op"],
+    status: "Current Co-op Students",
+  },
+];
