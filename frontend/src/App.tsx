@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import UserSetup from "./Pages/user-setup";
 import ProfilePage from "./Pages/profile_page";
 import CompanyOverviewPage from "./Pages/company_overview";
+import PrivateGroupDash from "./Pages/private_group_dash";
+import CreatePrivateGrp from "./Pages/create_private_grp";
 
 import LaunchScreen from "./components/LaunchScreen";
 import SignupPage from "./components/SignupPage";
@@ -22,7 +24,9 @@ export default function App() {
 
   // show launch screen first
   if (showLaunch) {
-    return <LaunchScreen onFinish={() => setShowLaunch(false)} duration={2000} />;
+    return (
+      <LaunchScreen onFinish={() => setShowLaunch(false)} duration={2000} />
+    );
   }
 
   return (
@@ -44,6 +48,12 @@ export default function App() {
         <Link to="/signin">
           <Button>Signin</Button>
         </Link>
+        <Link to="/private_msg_dash">
+          <Button>Private Messages Dasboard</Button>
+        </Link>
+        <Link to="/createprivate_grp">
+          <Button>Private Messages Dasboard</Button>
+        </Link>
       </div>
 
       <Routes>
@@ -55,6 +65,8 @@ export default function App() {
         <Route path="/setup" element={<UserSetup />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/company/:id" element={<CompanyOverviewPage />} />
+        <Route path="/private_msg_dash" element={<PrivateGroupDash />} />
+        <Route path="/createprivate_grp" element={<CreatePrivateGrp />} />
 
         {/* Default redirect */}
         <Route path="*" element={<Navigate to="/signup" />} />
