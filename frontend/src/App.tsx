@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import UserSetup from "./Pages/user-setup";
 import Dashboard from "./Pages/dashboard";
 import CompanyOverviewPage from "./Pages/company_overview";
+import CompanyMsgBoard from "./Pages/company_msg_board";
+import CompanyPost from "./Pages/company_post";
 
 import LaunchScreen from "./components/LaunchScreen";
 import SignupPage from "./components/SignupPage";
@@ -44,6 +46,8 @@ export default function App() {
                   <Route path="/setup" element={<UserSetup />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/company/:id" element={<CompanyOverviewPage />} />
+                  <Route path="/company_msgboard" element={<CompanyMsgBoard />} />
+                  <Route path="/companypost" element={<CompanyPost />} />
                   <Route path="*" element={<Navigate to="/setup" />} />
                 </Routes>
               </main>
@@ -55,5 +59,5 @@ export default function App() {
       {/* default fallback */}
       <Route path="*" element={<Navigate to="/signup" />} />
     </Routes>
-  );
+  )
 }
