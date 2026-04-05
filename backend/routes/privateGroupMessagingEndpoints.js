@@ -101,6 +101,7 @@ router.post('/groups/:groupId/members', async (req, res) => {
         .eq('id', groupId)
         .single();
 
+    // can't find group (doesn't exist)
     if (groupError || !group) {
         return res.status(404).json("Group not found.");
     }
