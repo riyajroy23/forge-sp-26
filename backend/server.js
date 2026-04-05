@@ -15,7 +15,7 @@ app.use('/api', userAuthRoutes);
 app.use('/api', userEndpointsRoutes);
 
 app.get('/', (req, res) => {
-    res.send('<h1>Hello, Express.js Server!</h1>');
+    res.send('<h1>Server is running!</h1>');
 });
 
 // specifying port to 3000, local host
