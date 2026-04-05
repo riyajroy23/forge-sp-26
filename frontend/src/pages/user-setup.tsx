@@ -12,10 +12,57 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { api } from "../lib/api"
  
 
 export default function UserSetup() {
   const [date, setDate] = React.useState<Date>()
+  const [user, setUser] = React.useState<any>(null);
+  const [bio, setBio] = React.useState('');
+  const [major, setMajor] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
+  const [message, setMessage] = React.useState('');
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await api.getMe();
+        if (res.success) {
+            setUser(res.data.user);
+            setBio(res.data.user.bio || '');
+            setMajor(res.data.user.major || '');
+        }
+      } catch (err) {
+        console.error("Failed to load user", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchUser();
+  }, []);
+
+  const handleSave = async () => {
+    if (!user) return;
+    setMessage('');
+    try {
+        const res = await api.updateProfile(user.user_id, {
+            bio,
+            major
+        });
+        if (res.success) {
+            setMessage('Profile updated successfully!');
+            setUser(res.data.user);
+        } else {
+            setMessage(res.error || 'Failed to update profile');
+        }
+    } catch (err) {
+        setMessage('An error occurred while saving.');
+    }
+  };
+
+  if (loading) return <div className="text-white bg-red-900 min-h-screen p-10 flex items-center justify-center">Loading...</div>;
+
   return ( 
     <Tabs defaultValue="profile" className="w-[400px]">
       <TabsList className="bg-red-900 text-white">
@@ -59,8 +106,8 @@ export default function UserSetup() {
                 />
 
                 <div>
-                  <p className="text-left font-semibold">username</p>
-                  <p className="text-left font-normal">name</p>
+                  <p className="text-left font-semibold">{user?.username || 'username'}</p>
+                  <p className="text-left font-normal">{user?.first_name || 'Name'} {user?.last_name || ''}</p>
                 </div>
 
               </div>
@@ -71,8 +118,13 @@ export default function UserSetup() {
                 <Textarea
                   placeholder="Tell us a little about yourself..."
                   className="mt-1"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
                 />
               </div>
+
+              {message && <p className="mt-4 text-sm text-green-600">{message}</p>}
+              <Button onClick={handleSave} className="mt-4 w-full">Save Changes</Button>
 
             </CardContent>
           </Card>
@@ -91,7 +143,7 @@ export default function UserSetup() {
                 <div className="flex items-center justify-between">
                   <div className="text-left">
                     <p className="text-sm font-semibold">Email</p>
-                    <p className="text-sm text-gray-600">user@email.com</p>
+                    <p className="text-sm text-gray-600">{user?.email || 'user@email.com'}</p>
                   </div>
 
                   <button className="text-sm text-gray-200 bg-gray-100 hover:bg-gray-700">
@@ -137,14 +189,16 @@ export default function UserSetup() {
 
                 {/* Major */}
                 <div className="flex items-center justify-between">
-                  <div className="text-left">
+                  <div className="text-left w-full mr-4">
                     <p className="text-sm font-semibold">Major</p>
-                    <p className="text-sm text-gray-600">major here</p>
+                    <input 
+                      type="text" 
+                      className="text-sm text-gray-600 border p-1 rounded mt-1 w-full" 
+                      value={major}
+                      onChange={(e) => setMajor(e.target.value)}
+                      placeholder="e.g. Computer Science"
+                    />
                   </div>
-
-                  <button className="text-sm text-gray-200 bg-gray-100 hover:bg-gray-700">
-                    Edit
-                  </button>
                 </div>
 
                 {/* Minor */}
@@ -189,6 +243,9 @@ export default function UserSetup() {
 
                   {/* Dropdown will go here */}
                 </div>
+                
+                {message && <p className="mt-4 text-sm text-green-600">{message}</p>}
+                <Button onClick={handleSave} className="mt-4 w-full">Save Details</Button>
 
               </div>
             </CardContent>

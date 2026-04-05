@@ -1,6 +1,28 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { api } from "../lib/api";
 
 const ProfilePage = () => {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await api.getMe();
+        if (res.success) {
+            setUser(res.data.user);
+        }
+      } catch (err) {
+        console.error("Failed to load user", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchUser();
+  }, []);
+
   const topBoxes = Array.from({ length: 6 });
 
   return (
@@ -27,7 +49,7 @@ const ProfilePage = () => {
   <div className="w-36 h-36 rounded-full bg-gray-400" />
 
   <h1 className="text-2xl font-bold text-black">
-    Hello, Sophia
+    {loading ? 'Loading...' : `Hello, ${user?.first_name || user?.username || 'Guest'}`}
   </h1>
 </div>
 

@@ -2,19 +2,32 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import recoopLogo from '../assets/images/recoop-logo2.png';
 import './SigninPage.css';
+import { api } from '../lib/api';
 
 interface SigninPageProps {
     onNavigateToSignup: () => void;
+    onSigninSuccess: () => void;
 }
 
-const SigninPage = ({ onNavigateToSignup }: SigninPageProps) => {
+const SigninPage = ({ onNavigateToSignup, onSigninSuccess }: SigninPageProps) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
-    const handleSignin = (e: React.FormEvent) => {
+    const handleSignin = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle signin logic here - audrey
-        console.log('Sign in:', { email, password });
+        setError('');
+        try {
+            const res = await api.login({ email, password });
+            if (res.success) {
+                localStorage.setItem('token', res.data.token);
+                onSigninSuccess();
+            } else {
+                setError(res.error || 'Login failed');
+            }
+        } catch (err: any) {
+            setError(err.message || 'An error occurred during login');
+        }
     };
 
     return (
@@ -23,6 +36,8 @@ const SigninPage = ({ onNavigateToSignup }: SigninPageProps) => {
                 <img src={recoopLogo} alt="Recoop Logo" className="signin-logo" />
 
                 <h1 className="signin-title">Sign In</h1>
+                
+                {error && <p className="text-red-500 mb-4">{error}</p>}
 
                 <form onSubmit={handleSignin} className="signin-form">
                     <div className="form-group">
