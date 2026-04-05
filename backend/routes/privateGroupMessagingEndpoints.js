@@ -85,6 +85,43 @@ router.delete('/groups/:groupId', async (req, res) => {
 });
 
 
+// Add the specified user to the specified group
+// POST /groups/:groupId/members - add the user to the group
+router.post('/groups/:groupId/members', async (req, res) => {
+
+    // extract fields
+    const groupId = parseInt(req.params.groupId);
+    const { userId } = req.body;
+
+
+    // first check if group exists
+    const { data: group, error: groupError } = await supabase
+        .from('groups')
+        .select('*')
+        .eq('id', groupId)
+        .single();
+
+    if (groupError || !group) {
+        return res.status(404).json("Group not found.");
+    }
+
+    // add user to group
+    const { data, error } = await supabase
+        .from('group_members')
+        .insert([{ group_id: groupId, user_id: userId }])
+        .select()
+        .single();
+
+    // cannot add user
+    if (error || !data) {
+        return res.status(404).json("Cannot add user to group.");
+    }
+
+    // otherwise, confirm addition of user to group
+    return res.status(201).json(data);
+});
+
+
 // Return all members of a group
 // GET /groups/:groupId/members
 router.get('/groups/:groupId/members', async (req, res) => {
