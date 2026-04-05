@@ -28,12 +28,10 @@ export default function CompanyOverviewPage() {
       className="flex flex-col min-h-screen w-screen"
       onClick={() => setMajorDropdownOpen(false)}
     >
-      {/* Top black navbar — placeholder, matches profile_page.tsx */}
-      <div className="w-full h-20 bg-black shrink-0" />
 
-      <div className="flex flex-1">
+      <div className="flex flex-1 -m-8">
         {/* Red sidebar — placeholder, matches profile_page.tsx */}
-        <div className="w-32 bg-[#B11D1D] p-4 flex flex-col shrink-0">
+        <div className="w-32 bg-[#1a1a1a] p-4 flex flex-col shrink-0">
           <div className="flex flex-col gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <Card key={i} className="h-20 w-full bg-white">
@@ -68,11 +66,11 @@ export default function CompanyOverviewPage() {
               <button
                 onClick={e => { e.stopPropagation(); setFollowed(f => !f); }}
                 aria-label={followed ? "Unfollow company" : "Follow company"}
-                className="p-1 rounded-full hover:bg-gray-100 transition"
+                className="p-1 rounded-full hover:bg-gray-100 !border-white transition"
               >
                 <Heart className={cn(
                   "w-5 h-5 transition",
-                  followed ? "fill-[var(--color-darkred)] text-[var(--color-darkred)]" : "text-gray-400"
+                  followed ? "fill-[#b11d1d] text-[#b11d1d]" : "text-gray-400"
                 )} />
               </button>
             </div>
@@ -89,6 +87,27 @@ export default function CompanyOverviewPage() {
                 Alumni who work here
               </span>
             </div>
+            <div className="mt-3 flex gap-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/company_msgboard");
+              }}
+              className="px-3 py-1.5 text-sm rounded-md bg-[#b11d1d] text-white hover:opacity-90 transition font-[var(--font-spacegrotesk)]"
+            >
+              Message Board
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/companypost");
+              }}
+              className="px-3 py-1.5 text-sm rounded-md bg-[#b11d1d] text-white hover:opacity-90 transition font-[var(--font-spacegrotesk)]"
+            >
+              Create Post
+            </button>
+          </div>
           </div>
         </CardContent>
       </Card>
