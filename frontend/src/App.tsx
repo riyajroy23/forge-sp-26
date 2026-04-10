@@ -1,4 +1,4 @@
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import UserSetup from "./Pages/user-setup";
@@ -8,8 +8,7 @@ import CompanyOverviewPage from "./Pages/company_overview";
 import LaunchScreen from "./components/LaunchScreen";
 import SignupPage from "./components/SignupPage";
 import SigninPage from "./components/SigninPage";
-
-import { Button } from "@/components/ui/button";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
   const [showLaunch, setShowLaunch] = useState(true);
@@ -26,39 +25,18 @@ export default function App() {
   }
 
   return (
-    <div className="p-6 space-y-4">
-      {/* Navigation (you can remove later) */}
-      <div className="space-x-2">
-        <Link to="/setup">
-          <Button>User Setup</Button>
-        </Link>
-        <Link to="/profile">
-          <Button>Profile</Button>
-        </Link>
-        <Link to="/company/1">
-          <Button>Company</Button>
-        </Link>
-        <Link to="/signup">
-          <Button>Signup</Button>
-        </Link>
-        <Link to="/signin">
-          <Button>Signin</Button>
-        </Link>
-      </div>
+    <Routes>
+      {/* public routes -- accessible without being logged in */}
+      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/signin" element={<SigninPage />} />
 
-      <Routes>
-        {/* Auth routes */}
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/signin" element={<SigninPage />} />
+      {/* protected routes -- redirects to /signin if not logged in */}
+      <Route path="/setup" element={<ProtectedRoute><UserSetup /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+      <Route path="/company/:id" element={<ProtectedRoute><CompanyOverviewPage /></ProtectedRoute>} />
 
-        {/* Main app routes */}
-        <Route path="/setup" element={<UserSetup />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/company/:id" element={<CompanyOverviewPage />} />
-
-        {/* Default redirect */}
-        <Route path="*" element={<Navigate to="/signup" />} />
-      </Routes>
-    </div>
+      {/* default redirect to signup */}
+      <Route path="*" element={<Navigate to="/signup" />} />
+    </Routes>
   );
 }
