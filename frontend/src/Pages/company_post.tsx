@@ -33,7 +33,7 @@ export default function CompanyPost() {
 
   return (
     // Clicking anywhere outside the dropdown closes it,
-    <div className="flex flex-col min-h-screen w-screen">
+    <div className="flex flex-col min-h-screen">
       <div className="flex flex-1 -m-8">
         <div className="w-32 bg-[#1a1a1a] p-4 flex flex-col shrink-0">
           <div className="flex flex-col gap-4">
@@ -56,7 +56,7 @@ export default function CompanyPost() {
             className="flex items-center gap-1 text-gray-600 hover:text-black mb-4 transition"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-[var(--font-spacegrotesk)]">
+            <span className="text-sm font-spacegrotesk">
               Back
             </span>
           </button>
@@ -79,7 +79,7 @@ export default function CompanyPost() {
                       <QuestionCard key={r.id} post={r} />
                     ))
                   ) : (
-                    <p className="text-sm text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
+                    <p className="text-sm text-gray-400 py-4 text-center font-spacegrotesk">
                       No posts match your search.
                     </p>
                   )}
@@ -97,7 +97,7 @@ export default function CompanyPost() {
                       <ReplyCard key={r.id} response={r} />
                     ))
                   ) : (
-                    <p className="text-sm text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
+                    <p className="text-sm text-gray-400 py-4 text-center font-spacegrotesk">
                       No posts match your search.
                     </p>
                   )}
