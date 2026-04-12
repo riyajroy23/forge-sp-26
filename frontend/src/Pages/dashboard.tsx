@@ -166,17 +166,17 @@ export default function Dashboard() {
 
           {/* Companies widget */}
           <Card className="rounded-xl border-0 shadow-sm bg-gray-300">
-            <CardContent className="p-5">
+            <CardContent className="py-4 px-7">
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-[#b11d1d]" />
-                  <h2 className="text-lg font-spacegrotesk font-semibold text-gray-900">
+                <div className="flex items-center gap-2 pl-2 pb-2">
+                  <Building2 className="w-10 h-10 text-[#b11d1d] mr-3" />
+                  <h2 className="text-2xl font-spacegrotesk font-semibold text-gray-900">
                     Featured Companies
                   </h2>
                 </div>
                 <Link
                   to="/company/1"
-                  className="text-xs text-[#b11d1d] font-spacegrotesk flex items-center gap-1 hover:underline"
+                  className="text-md text-[#b11d1d] font-spacegrotesk flex items-center gap-1 hover:underline"
                 >
                   View all <ArrowRight className="w-3 h-3" />
                 </Link>
@@ -185,25 +185,25 @@ export default function Dashboard() {
                 {FEATURED_COMPANIES.map((co) => (
                   <div
                     key={co.id}
-                    className="flex items-center bg-white gap-4 p-3 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer group"
+                    className="flex items-center bg-white gap-4 p-3 pl-5 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer group"
                     onClick={() => navigate(`/company/${co.id}`)}
                   >
                     {/* Company logo placeholder */}
-                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
-                      <Building2 className="w-6 h-6 text-gray-400" />
+                    <div className="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                      <Building2 className="w-7 h-7 text-gray-400" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-spacegrotesk font-semibold text-gray-900 text-sm">
+                    <div className="flex-1 min-w-0 pl-2">
+                      <p className="font-spacegrotesk font-semibold text-gray-900 text-lg">
                         {co.name}
                       </p>
-                      <p className="text-xs text-gray-500 font-spacegrotesk truncate">
+                      <p className="text-md text-gray-500 font-spacegrotesk truncate">
                         {co.tagline}
                       </p>
                       <div className="flex gap-3 mt-1">
-                        <span className="text-xs text-gray-400 font-spacegrotesk flex items-center gap-1">
+                        <span className="text-md text-gray-400 font-spacegrotesk flex items-center gap-1">
                           <Star className="w-3 h-3" /> {co.alumni} alumni
                         </span>
-                        <span className="text-xs text-gray-400 font-spacegrotesk flex items-center gap-1">
+                        <span className="text-md text-gray-400 font-spacegrotesk flex items-center gap-1">
                           <Briefcase className="w-3 h-3" /> {co.openRoles} roles
                         </span>
                       </div>
@@ -222,17 +222,17 @@ export default function Dashboard() {
 
           {/* Open Roles widget */}
           <Card className="rounded-xl border-0 shadow-sm bg-gray-300">
-            <CardContent className="p-5">
+            <CardContent className="py-4 px-7">
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-[#b11d1d]" />
-                  <h2 className="text-lg font-spacegrotesk font-semibold text-gray-900">
+                <div className="flex items-center gap-2 pl-2 pb-2">
+                  <TrendingUp className="w-10 h-10 text-[#b11d1d] mr-3" />
+                  <h2 className="text-2xl font-spacegrotesk font-semibold text-gray-900">
                     Open Roles For You
                   </h2>
                 </div>
                 <Link
                   to="/company/1"
-                  className="text-xs text-[#b11d1d] font-spacegrotesk flex items-center gap-1 hover:underline"
+                  className="text-md text-[#b11d1d] font-spacegrotesk flex items-center gap-1 hover:underline"
                 >
                   Browse all <ArrowRight className="w-3 h-3" />
                 </Link>
@@ -241,22 +241,22 @@ export default function Dashboard() {
                 {OPEN_ROLES.map((role) => (
                   <div
                     key={role.id}
-                    className="flex items-center gap-4 p-3 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer group"
+                    className="flex items-center bg-white gap-4 p-3 pl-5 py-5 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer group"
                     onClick={() => navigate(`/company/${role.companyId}`)}
                   >
-                    <div className="w-10 h-10 rounded-lg bg-[#b11d1d]/10 flex items-center justify-center shrink-0">
-                      <Briefcase className="w-5 h-5 text-[#b11d1d]" />
+                    <div className="w-14 h-14 rounded-lg bg-[#b11d1d]/10 flex items-center justify-center shrink-0">
+                      <Briefcase className="w-7 h-7 text-[#b11d1d]" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-spacegrotesk font-semibold text-gray-900 text-sm">
+                    <div className="flex-1 min-w-0 pl-2">
+                      <p className="font-spacegrotesk font-semibold text-gray-900 text-lg">
                         {role.title}
                       </p>
-                      <p className="text-xs text-gray-500 font-spacegrotesk">
+                      <p className="text-md text-gray-500 font-spacegrotesk">
                         {role.company} · {role.salary}
                       </p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-xs text-gray-400 font-spacegrotesk flex items-center gap-1 justify-end">
+                      <p className="text-md text-gray-400 font-spacegrotesk flex items-center gap-1 justify-end">
                         <Clock className="w-3 h-3" /> {role.deadline}
                       </p>
                       <div className="flex gap-1 mt-1 justify-end">
@@ -282,37 +282,37 @@ export default function Dashboard() {
         <div className="flex flex-col gap-6">
 
           {/* Message Board widget */}
-          <Card className="rounded-xl border-0 shadow-sm bg-white">
-            <CardContent className="p-5">
+          <Card className="rounded-xl border-0 shadow-sm bg-gray-300">
+            <CardContent className="py-4 px-7">
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <MessageCircle className="w-5 h-5 text-[#b11d1d]" />
-                  <h2 className="text-base font-spacegrotesk font-semibold text-gray-900">
+                <div className="flex items-center gap-2 pl-2 pb-2 ">
+                  <MessageCircle className="w-10 h-10 text-[#b11d1d] mr-3" />
+                  <h2 className="text-2xl font-spacegrotesk font-semibold text-gray-900">
                     Message Board
                   </h2>
                 </div>
                 <Link
                   to="/company_msgboard"
-                  className="text-xs text-[#b11d1d] font-spacegrotesk flex items-center gap-1 hover:underline"
+                  className="text-md text-[#b11d1d] font-spacegrotesk flex items-center gap-1 hover:underline"
                 >
                   View all <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3">
                 {RECENT_POSTS.map((post) => (
                   <div
                     key={post.id}
-                    className="p-3 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer"
+                    className="p-3 pl-5 bg-white rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer"
                     onClick={() => navigate("/companypost")}
                   >
-                    <p className="text-xs font-spacegrotesk font-semibold text-gray-900 line-clamp-2 leading-snug">
+                    <p className="text-md font-spacegrotesk font-semibold text-gray-900 line-clamp-2 leading-snug">
                       {post.title}
                     </p>
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-[10px] text-gray-400 font-spacegrotesk">
+                      <span className="text-md text-gray-400 font-spacegrotesk">
                         {post.user} · {post.time}
                       </span>
-                      <span className="text-[10px] text-gray-400 font-spacegrotesk flex items-center gap-1">
+                      <span className="text-md text-gray-400 font-spacegrotesk flex items-center gap-1">
                         <MessageSquare className="w-3 h-3" /> {post.replies}
                       </span>
                     </div>
@@ -329,9 +329,9 @@ export default function Dashboard() {
           </Card>
 
           {/* Groups & Chats quick-links */}
-          <Card className="rounded-xl border-0 shadow-sm bg-white">
-            <CardContent className="p-5">
-              <h2 className="text-base font-spacegrotesk font-semibold text-gray-900 mb-3">
+          <Card className="rounded-xl border-0 shadow-sm bg-gray-300">
+            <CardContent className="py-4 px-7">
+              <h2 className="text-2xl pb-3 font-spacegrotesk font-semibold text-gray-900 mb-3">
                 Quick Links
               </h2>
               <div className="flex flex-col gap-2">
@@ -341,10 +341,10 @@ export default function Dashboard() {
                       <Users className="w-4 h-4 text-green-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-spacegrotesk font-semibold text-gray-800">
+                      <p className="text-md font-spacegrotesk font-semibold text-gray-800">
                         Groups
                       </p>
-                      <p className="text-[10px] text-gray-500 font-spacegrotesk">
+                      <p className="text-sm text-gray-500 font-spacegrotesk">
                         3 active groups
                       </p>
                     </div>
@@ -354,13 +354,13 @@ export default function Dashboard() {
                 <Link to="/chats">
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                      <MessageSquare className="w-4 h-4 text-blue-600" />
+                      <MessageSquare className="w-5 h-5 text-blue-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-spacegrotesk font-semibold text-gray-800">
+                      <p className="text-md font-spacegrotesk font-semibold text-gray-800">
                         Chats
                       </p>
-                      <p className="text-[10px] text-gray-500 font-spacegrotesk">
+                      <p className="text-sm text-gray-500 font-spacegrotesk">
                         12 unread messages
                       </p>
                     </div>
@@ -373,10 +373,10 @@ export default function Dashboard() {
                       <Building2 className="w-4 h-4 text-[#b11d1d]" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-spacegrotesk font-semibold text-gray-800">
+                      <p className="text-md font-spacegrotesk font-semibold text-gray-800">
                         Companies
                       </p>
-                      <p className="text-[10px] text-gray-500 font-spacegrotesk">
+                      <p className="text-sm text-gray-500 font-spacegrotesk">
                         4 saved companies
                       </p>
                     </div>
