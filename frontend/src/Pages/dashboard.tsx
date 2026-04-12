@@ -14,7 +14,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-// ─── Mock data (mirrors real pages) ──────────────────────────────────────────
 
 const FEATURED_COMPANIES = [
   {
@@ -103,7 +102,6 @@ const STATS = [
   { label: "Active Groups", value: "3", icon: Users, color: "bg-red-100 text-[#b11d1d]" },
 ];
 
-// ─── Dashboard ────────────────────────────────────────────────────────────────
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -111,11 +109,10 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[var(--color-lightgrey)] -m-8 p-8">
 
-      {/* ── Welcome Banner ─────────────────────────────────────────────────── */}
       <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#b11d1d] to-[#7a1212] p-10 text-white shadow-md flex items-center justify-between">
         <div>
           <p className="text-white/90 text-md font-spacegrotesk mb-1">
-            Wednesday, March 25 {/* Replace with current date */}
+            Wednesday, March 25
           </p>
           <h1 className="text-3xl font-fredoka font-semibold py-5">
             Welcome back, Riya!
@@ -137,7 +134,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── Stat chips ─────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {STATS.map(({ label, value, icon: Icon, color }) => (
           <Card key={label} className="rounded-xl border-0 shadow-sm bg-black">
@@ -158,13 +154,8 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* ── Main grid ──────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-3 gap-6">
-
-        {/* ── Featured Companies (2/3 width) ─────────────────────────────── */}
-        <div className="col-span-2 flex flex-col gap-6">
-
-          {/* Companies widget */}
+        <div className="col-span-3">
           <Card className="rounded-xl border-0 shadow-sm bg-gray-300">
             <CardContent className="py-4 px-7">
               <div className="flex items-center justify-between mb-4">
@@ -220,7 +211,9 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Open Roles widget */}
+        </div>
+
+        <div className="col-span-2">
           <Card className="rounded-xl border-0 shadow-sm bg-gray-300">
             <CardContent className="py-4 px-7">
               <div className="flex items-center justify-between mb-4">
@@ -278,11 +271,8 @@ export default function Dashboard() {
 
         </div>
 
-        {/* ── Right column (1/3 width) ────────────────────────────────────── */}
-        <div className="flex flex-col gap-6">
-
-          {/* Message Board widget */}
-          <Card className="rounded-xl border-0 shadow-sm bg-gray-300">
+        <div className="col-span-1">
+          <Card className="rounded-xl border-0 shadow-sm bg-gray-300 h-[460px]">
             <CardContent className="py-4 px-7">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2 pl-2 pb-2 ">
@@ -327,66 +317,6 @@ export default function Dashboard() {
               </button>
             </CardContent>
           </Card>
-
-          {/* Groups & Chats quick-links */}
-          <Card className="rounded-xl border-0 shadow-sm bg-gray-300">
-            <CardContent className="py-4 px-7">
-              <h2 className="text-2xl pb-3 font-spacegrotesk font-semibold text-gray-900 mb-3">
-                Quick Links
-              </h2>
-              <div className="flex flex-col gap-2">
-                <Link to="/groups">
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-green-50 hover:bg-green-100 transition cursor-pointer">
-                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                      <Users className="w-4 h-4 text-green-600" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-md font-spacegrotesk font-semibold text-gray-800">
-                        Groups
-                      </p>
-                      <p className="text-sm text-gray-500 font-spacegrotesk">
-                        3 active groups
-                      </p>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
-                  </div>
-                </Link>
-                <Link to="/chats">
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition cursor-pointer">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                      <MessageSquare className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-md font-spacegrotesk font-semibold text-gray-800">
-                        Chats
-                      </p>
-                      <p className="text-sm text-gray-500 font-spacegrotesk">
-                        12 unread messages
-                      </p>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
-                  </div>
-                </Link>
-                <Link to="/company/1">
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-red-50 hover:bg-red-100 transition cursor-pointer">
-                    <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-                      <Building2 className="w-4 h-4 text-[#b11d1d]" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-md font-spacegrotesk font-semibold text-gray-800">
-                        Companies
-                      </p>
-                      <p className="text-sm text-gray-500 font-spacegrotesk">
-                        4 saved companies
-                      </p>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
-                  </div>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-
         </div>
       </div>
     </div>
