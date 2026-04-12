@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
 // Mock data -- using hard-coded values, waiting for database connection
@@ -136,7 +136,7 @@ router.get('/companies/search/major/:major', (req, res) => {
 })
 
 // Return the company with the specified companyId.
-// GET /companies/:companyId - return the company that matches the companyId. 
+// GET /companies/:companyId - return the company that matches the companyId.
 router.get('/companies/:companyId', (req, res) => {
 
     // extract field
@@ -152,3 +152,5 @@ router.get('/companies/:companyId', (req, res) => {
     // return company (if found)
     return res.status(200).json(company);
 })
+
+export default router;

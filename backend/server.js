@@ -1,8 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const userAuthRoutes = require('./routes/userAuth');
+import userAuthRoutes from './routes/userAuth.js';
 
 const app = express();
 
