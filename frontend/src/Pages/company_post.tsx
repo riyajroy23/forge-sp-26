@@ -33,16 +33,9 @@ export default function CompanyPost() {
 
   return (
     // Clicking anywhere outside the dropdown closes it,
-    <div
-    //   className="flex flex-col min-h-screen w-screen"
-    //   onClick={() => setIndustryDropdownOpen(false)}
-    >
-      {/* Top black navbar — placeholder, matches profile_page.tsx */}
-      <div className="w-full h-20 bg-black shrink-0" />
-
-      <div className="flex flex-1">
-        {/* Red sidebar — placeholder, matches profile_page.tsx */}
-        <div className="w-32 bg-[#B11D1D] p-4 flex flex-col shrink-0">
+    <div className="flex flex-col min-h-screen w-screen">
+      <div className="flex flex-1 -m-8">
+        <div className="w-32 bg-[#1a1a1a] p-4 flex flex-col shrink-0">
           <div className="flex flex-col gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <Card key={i} className="h-20 w-full bg-white">
