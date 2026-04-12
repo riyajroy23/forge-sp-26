@@ -50,7 +50,7 @@ export default function CompanyMsgBoard() {
             className="flex items-center gap-1 text-gray-600 hover:text-black mb-4 transition"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-[var(--font-spacegrotesk)]">
+            <span className="text-sm font-spacegrotesk">
               Back
             </span>
           </button>
@@ -71,7 +71,7 @@ export default function CompanyMsgBoard() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md
-                            font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
+                            font-spacegrotesk focus:outline-none focus:ring-2
                             focus:ring-[var(--color-darkred)]/40"
                   />
                 </div>
@@ -89,7 +89,7 @@ export default function CompanyMsgBoard() {
                       <QuestionCard key={r.id} post={r} />
                     ))
                   ) : (
-                    <p className="text-sm text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
+                    <p className="text-sm text-gray-400 py-4 text-center font-spacegrotesk">
                       No posts match your search.
                     </p>
                   )}

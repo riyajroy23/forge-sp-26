@@ -146,54 +146,39 @@
   --color-voiceuserprofiles: var(--voice-userprofiles);
 }
 
+:root {
+  --color-darkred: oklch(0.491 0.1825 27.27);
+  --color-white: oklch(1, 0, 0);
+  --color-black: oklch(0, 0, 0);
+  --color-lightgrey: oklch(0.8853, 0, 0);
+  --color-medgrey: oklch(0.2858 0.0036 286.17);
+  --color-darkgrey: oklch(0.1178 0.0223 10.85);
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-/* Light mode */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+  --background: oklch(1, 0, 0);
+  --foreground: oklch(0, 0, 0);
+  --sidebar: oklch(0.491 0.1825 27.27);
+  --sidebar-buttons: oklch(0.8853, 0, 0);
+  --topbar: oklch(0, 0, 0);
+  --settings-btn: oklch(0, 0, 0);
+  --settings-btn-border: oklch(1, 0, 0);
+  --share-btn: oklch(0, 0, 0);
+  --share-btn-border: oklch(1, 0, 0);
+  --friends-btn: oklch(0, 0, 0);
+  --friends-btn-border: oklch(1, 0, 0);
+  --coop-header: oklch(0.8853, 0, 0);
+  --coop-item: oklch(0.8853, 0, 0);
+  --coopgroup-header: oklch(0.8853, 0, 0);
+  --group-item: oklch(0.8853, 0, 0);
+  --todo-header: oklch(0.8853, 0, 0);
+  --todo-items: oklch(0.8853, 0, 0);
+  --settings: oklch(1, 0, 0);
+  --voicecall: oklch(0.2858 0.0036 286.17);
+  --voice-topbar: oklch(0.1178 0.0223 10.85);
+  --voice-userprofiles: oklch(0.1178 0.0223 10.85);
 }
 
 @layer components {
+  /* Onboarding */
   .title {
     @apply text-[var(--color-black)] text-4xl font-fredoka;
   }
@@ -272,7 +257,6 @@ button:focus-visible {
   --ring: oklch(0.552 0.016 285.938);
 }
 
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -281,11 +265,4 @@ button:focus-visible {
   body {
     @apply bg-background text-foreground;
   }
-}
-.container {
-  display: flex; /* This makes the child elements sit side-by-side */
-}
-/* Optional: Add spacing or styling */
-.container p {
-  margin-right: 16px; /* Adds space between the two texts */
 }

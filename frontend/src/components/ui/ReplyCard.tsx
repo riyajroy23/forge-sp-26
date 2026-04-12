@@ -1,10 +1,7 @@
 import { useState } from "react";
-import { Heart, BarChart2, ThumbsUp, MessageSquareText } from "lucide-react";
+import { BarChart2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { type Response } from "@/Pages/company_msg_board";
-import { Routes, Route, Link, Navigate, useNavigate } from "react-router-dom";
-import CompanyPost from "@/Pages/company_post";
+import { type Response } from "@/Pages/company_post";
 
 export default function ReplyCard({ response }: { response: Response }) {
   const [followed, setFollowed] = useState(false);
@@ -17,13 +14,13 @@ export default function ReplyCard({ response }: { response: Response }) {
 
       <div className="flex-1 min-w-0">
         <div className="container">
-          <p className="font-semibold text-lg text-black font-[var(--font-spacegrotesk)] truncate">
+          <p className="font-semibold text-lg text-black font-spacegrotesk truncate">
             {response.user}
           </p>
-          <p className="text-sm text-gray-500">{response.time}</p>
+          <p className="text-sm text-gray-500 font-spacegrotesk">{response.time}</p>
         </div>
 
-        <div className=" text-base text-black font-[var(--font-spacegrotesk)]">
+        <div className="text-base text-black font-spacegrotesk">
           <p style={{ marginBottom: "20px" }}>{response.answer}</p>
         </div>
       </div>
