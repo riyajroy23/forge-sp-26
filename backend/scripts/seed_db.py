@@ -10,6 +10,7 @@ backend_dir = script_dir.parent
 env_path = backend_dir / ".env"
 load_dotenv(env_path)
 
+
 # read Supabase credentials from environment
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 # The .env file uses SUPABASE_SERVICE_ROLE_KEY, so we must use that key
@@ -22,6 +23,17 @@ if not SUPABASE_URL or not SUPABASE_SECRET_KEY:
 
 # create Supabase client (authenticated as backend role)
 supabase = create_client(SUPABASE_URL, SUPABASE_SECRET_KEY)
+
+def seed(users):
+    try:
+        response = supabase.table("users").upsert(users, on_conflict="email").execute()
+        print("Seeding successful!")
+        print(response.data)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        raise 
+
+
 
 # dummy data to insert into the database
 dummy_users = [
@@ -64,3 +76,21 @@ CREATE TABLE public.users (
         # Re-raise other errors
         print(f"An unexpected error occurred: {e}")
         raise e
+
+def seed_companies(companies):
+    try:
+        rows = [
+            {
+                "name": c[0],
+                "overview": c[2],
+                "industry": c[3],
+                "headquarters_location": c[4],
+            }
+            for c in companies
+        ]
+        response = supabase.table("Company").upsert(rows, on_conflict="name").execute()
+        print("Company seeding successful!")
+        print(response.data)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        raise
