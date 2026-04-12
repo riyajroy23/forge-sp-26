@@ -2,8 +2,7 @@
 # Environment variables
 # =====================
 .env
-.env.local
-.env*.local
+.env.*
 !.env.example
 
 # =====================

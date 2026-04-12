@@ -2,19 +2,50 @@ import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import recoopLogo from '../assets/images/recoop-logo2.png';
+import { saveAuth } from '@/lib/auth';
 import './SigninPage.css';
+
+const API_URL = 'http://localhost:3000/api';
 
 const SigninPage = () => {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleSignin = (e: React.FormEvent) => {
+    const handleSignin = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Sign in:', { email, password });
+        setError('');
+        setLoading(true);
 
-        navigate("/setup");
+        try {
+            const response = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // display error message returned from backend (e.g. invalid credentials)
+                setError(data.error || 'Sign in failed. Please try again.');
+                return;
+            }
+
+            // store token and user in localStorage
+            saveAuth(data.data.token, data.data.user);
+
+            // navigate to setup page
+            navigate('/setup');
+
+        } catch (err) {
+            setError('Unable to connect to server. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -23,6 +54,13 @@ const SigninPage = () => {
                 <img src={recoopLogo} alt="Recoop Logo" className="signin-logo" />
 
                 <h1 className="signin-title">Sign In</h1>
+
+                {/* display error message from backend if login fails */}
+                {error && (
+                    <p style={{ color: '#a83232', textAlign: 'center', marginBottom: '1rem', fontFamily: 'Fredoka, sans-serif' }}>
+                        {error}
+                    </p>
+                )}
 
                 <form onSubmit={handleSignin} className="signin-form">
                     <div className="form-group">
@@ -47,8 +85,8 @@ const SigninPage = () => {
                         />
                     </div>
 
-                    <Button type="submit" className="signin-button">
-                        Log in
+                    <Button type="submit" className="signin-button" disabled={loading}>
+                        {loading ? 'Signing in...' : 'Log in'}
                     </Button>
                 </form>
 

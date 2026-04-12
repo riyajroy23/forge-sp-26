@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import recoopLogo from '../assets/images/recoop-logo2.png';
+import { saveAuth } from '@/lib/auth';
 import './SignupPage.css';
+
+const API_URL = 'http://localhost:3000/api';
 
 const SignupPage = () => {
     const navigate = useNavigate();
@@ -10,13 +13,44 @@ const SignupPage = () => {
     const [displayName, setDisplayName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleSignup = (e: React.FormEvent) => {
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
+        setLoading(true);
 
-        console.log('Signup:', { displayName, email, password });
+        try {
+            const response = await fetch(`${API_URL}/signup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: displayName,
+                    email,
+                    password
+                })
+            });
 
-        navigate("/setup");
+            const data = await response.json();
+
+            if (!response.ok) {
+                // display error message returned from backend (e.g. invalid email, weak password)
+                setError(data.error || 'Signup failed. Please try again.');
+                return;
+            }
+
+            // store token and user in localStorage
+            saveAuth(data.data.token, data.data.user);
+
+            // navigate to setup page
+            navigate('/setup');
+
+        } catch (err) {
+            setError('Unable to connect to server. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -25,6 +59,13 @@ const SignupPage = () => {
                 <img src={recoopLogo} alt="Recoop Logo" className="signup-logo" />
 
                 <h1 className="signup-title">Create an account</h1>
+
+                {/* display error message from backend if signup fails */}
+                {error && (
+                    <p style={{ color: '#a83232', textAlign: 'center', marginBottom: '1rem', fontFamily: 'Fredoka, sans-serif' }}>
+                        {error}
+                    </p>
+                )}
 
                 <form onSubmit={handleSignup} className="signup-form">
                     <div className="form-group">
@@ -60,8 +101,8 @@ const SignupPage = () => {
                         />
                     </div>
 
-                    <Button type="submit" className="signup-button">
-                        Sign up
+                    <Button type="submit" className="signup-button" disabled={loading}>
+                        {loading ? 'Creating account...' : 'Sign up'}
                     </Button>
                 </form>
 

@@ -10,6 +10,7 @@ import CompanyPost from "./Pages/company_post";
 import LaunchScreen from "./components/LaunchScreen";
 import SignupPage from "./components/SignupPage";
 import SigninPage from "./components/SigninPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import Navbar from "@/components/ui/navbar";
 import Sidebar from "@/components/ui/sidebar";
@@ -43,11 +44,11 @@ export default function App() {
               <Sidebar />
               <main className="flex-1 p-8">
                 <Routes>
-                  <Route path="/setup" element={<UserSetup />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/company/:id" element={<CompanyOverviewPage />} />
-                  <Route path="/company_msgboard" element={<CompanyMsgBoard />} />
-                  <Route path="/companypost" element={<CompanyPost />} />
+                  <Route path="/setup" element={<ProtectedRoute><UserSetup /></ProtectedRoute>} />
+                  <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/company/:id" element={<ProtectedRoute><CompanyOverviewPage /></ProtectedRoute>} />
+                  <Route path="/company_msgboard" element={<ProtectedRoute><CompanyMsgBoard /></ProtectedRoute>} />
+                  <Route path="/companypost" element={<ProtectedRoute><CompanyPost /></ProtectedRoute>} />
                   <Route path="*" element={<Navigate to="/setup" />} />
                 </Routes>
               </main>
@@ -59,5 +60,5 @@ export default function App() {
       {/* default fallback */}
       <Route path="*" element={<Navigate to="/signup" />} />
     </Routes>
-  )
+  );
 }
