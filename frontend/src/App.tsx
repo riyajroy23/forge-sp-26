@@ -23,18 +23,15 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // 🔥 Launch screen first
   if (showLaunch) {
     return <LaunchScreen onFinish={() => setShowLaunch(false)} duration={2000} />;
   }
 
   return (
     <Routes>
-      {/* ================= AUTH ================= */}
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/signin" element={<SigninPage />} />
 
-      {/* ================= APP LAYOUT ================= */}
       <Route
         path="/*"
         element={
