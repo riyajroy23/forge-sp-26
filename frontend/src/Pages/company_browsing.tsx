@@ -10,7 +10,7 @@ import CompanyCard from "@/components/CompanyCard";
 export default function CompanyBrowsing() {
   // const { id = "1" } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const companies = getMockCompany();
+  const [companies] = useState(() => getMockCompany());
 
   const [industryFilter, setIndustryFilter] = useState("All Industries");
   const [search, setSearch] = useState("");

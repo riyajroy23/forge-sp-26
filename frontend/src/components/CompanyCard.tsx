@@ -18,10 +18,9 @@ export default function CompanyCard({ company }: { company: Company }) {
           {company.name}
         </p>
         <div className="text-base text-gray-500 font-[var(--font-spacegrotesk)]">
-          Offering roles for: {company.roles.map(a => (
-            <p key={a.id}> 
-                {a.title}
-            </p>
+          Offering roles for:
+          {company.roles.map((item, index) => (
+            <div key={index}>{item.title}</div>
           ))}
         </div>
       </div>
