@@ -1,0 +1,127 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Space+Grotesk:wght@300..700&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+
+@theme inline {
+  --font-fredoka: 'Fredoka', system-ui, fredoka-font;
+  --font-spacegrotesk: 'Space Grotesk', system-ui, space-grotesk;
+  --color-background: var(--background);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-buttons: (--sidebar-buttons);
+  --color-topbar: var(--topbar);
+  --color-settingsbtn: var(--settings-btn);
+  --color-settingsbtnborder: var(--settings-btn-border);
+  --color-sharebtn: var(--share-btn);
+  --color-sharebtn-border: var(--share-btn-border);
+  --color-friendsbtn: var(--friends-btn);
+  --color-friendsbtn-border: var(--friends-btn-border);
+  --color-coopheader: var(--coop-header);
+  --color-coopitem: var(--coop-item);
+  --color-coopgroupheader: var(--coopgroup-header);
+  --color-groupitem: var(--group-item);
+  --color-todoheader: var(--todo-header);
+  --color-todoitems: var(-todo-items);
+  --color-settings-bg: var(--settings);
+  --color-voicecall-bg: var(--voicecall);
+  --color-voicetopbar: var(--voice-topbar);
+  --color-voiceuserprofiles: cvar(--voice-userprofiles);
+  
+}
+
+:root{
+  --color-darkred: oklch(0.491 0.1825 27.27);
+  --color-white: oklch(1, 0, 0);
+  --color-black: oklch(0, 0, 0);
+  --color-lightgrey: oklch(0.8853, 0, 0);
+  --color-medgrey: oklch(0.2858 0.0036 286.17);
+  --color-darkgrey: oklch(0.1178 0.0223 10.85);
+
+  --background: oklch(1, 0, 0);
+  --foreground: oklch(0, 0, 0);
+  --sidebar: oklch(0.491 0.1825 27.27);
+  --sidebar-buttons: oklch(0.8853, 0, 0);
+  --topbar: oklch(0, 0, 0);
+  --settings-btn: oklch(0, 0, 0);
+  --settings-btn-border: oklch(1, 0, 0);
+  --share-btn: oklch(0, 0, 0);
+  --share-btn-border: oklch(1, 0, 0);
+  --friends-btn: oklch(0, 0, 0);
+  --friends-btn-border: oklch(1, 0, 0);
+  --coop-header:oklch(0.8853, 0, 0);
+  --coop-item: oklch(0.8853, 0, 0);
+  --coopgroup-header:oklch(0.8853, 0, 0);
+  --group-item: oklch(0.8853, 0, 0);
+  --todo-header: oklch(0.8853, 0, 0);
+  --todo-items: oklch(0.8853, 0, 0);
+  --settings: oklch(1, 0, 0);
+  --voicecall:  oklch(0.2858 0.0036 286.17);
+  --voice-topbar: oklch(0.1178 0.0223 10.85);
+  --voice-userprofiles: oklch(0.1178 0.0223 10.85);
+}
+
+
+@layer onboarding-btns {
+  .title {
+    @apply text-color-black text-4x1 font-fredoka;
+  }
+  .display-name {
+    @apply text-color-black text-lg font-fredoka;
+  }
+  .email {
+    @apply text-color-black text-lg font-fredoka;
+  }
+  .password {
+    @apply text-color-black text-lg font-fredoka;
+  }
+  .proceed-btn {
+    @apply text-color-white text-base font-fredoka;
+  }
+  
+}
+
+
+@layer landing-page-btns {
+  .todo-header {
+    @apply text-color-black text-3x1 font-fredoka;
+  }
+  .group-header {
+    @apply text-color-black text-sm font-spacegrotesk;
+  }
+  .todo-info {
+    @apply text-color-black text-sm font-fredoka;
+  }
+  .sidebar-options {
+    @apply text-color-white text-base font-fredoka;
+  }
+  .username {
+    @apply text-color-white text-2x1 font-spacegrotesk;
+  }
+}
+
+@layer account-settings-btns {
+  .title {
+    @apply text-color-black text-5x1 font-spacegrotesk font-bold;
+  }
+  .headers {
+    @apply text-color-black text-4x1 font-spacegrotesk font-bold;
+  }
+  .info-labels {
+    @apply text-color-black text-2x1 font-spacegrotesk;
+  }
+  .user-info {
+    @apply text-color-black text-2x1 font-spacegrotesk font-bold;
+  }
+}
+
+@layer voice-call {
+  .usernames {
+    @apply text-color-white text-lg font-fredoka;
+  }
+  .timer {
+    @apply text-color-white text-lg font-fredoka;
+  }
+}
+
+

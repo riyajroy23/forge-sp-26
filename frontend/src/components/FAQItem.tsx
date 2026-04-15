@@ -13,7 +13,7 @@ export default function FAQItem({ question, answer }: FAQItemProps) {
     <div className="border-b border-gray-200 last:border-0">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between py-3 text-left gap-2"
+        className="!bg-transparent w-full flex items-center justify-between py-3 text-left gap-2"
       >
         <span className="text-sm font-semibold text-black font-[var(--font-spacegrotesk)]">
           {question}
