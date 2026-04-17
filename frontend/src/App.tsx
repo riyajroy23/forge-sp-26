@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import UserSetup from "./Pages/user-setup";
 import Dashboard from "./Pages/dashboard";
 import CompanyOverviewPage from "./Pages/company_overview";
+import PrivateGroupDash from "./Pages/private_group_dash";
+import CreatePrivateGrp from "./Pages/create_private_grp";
 import CompanyMsgBoard from "./Pages/company_msg_board";
 import CompanyPost from "./Pages/company_post";
 
@@ -24,7 +26,9 @@ export default function App() {
   }, []);
 
   if (showLaunch) {
-    return <LaunchScreen onFinish={() => setShowLaunch(false)} duration={2000} />;
+    return (
+      <LaunchScreen onFinish={() => setShowLaunch(false)} duration={2000} />
+    );
   }
 
   return (
@@ -46,6 +50,10 @@ export default function App() {
                   <Route path="/company/:id" element={<ProtectedRoute><CompanyOverviewPage /></ProtectedRoute>} />
                   <Route path="/company_msgboard" element={<ProtectedRoute><CompanyMsgBoard /></ProtectedRoute>} />
                   <Route path="/companypost" element={<ProtectedRoute><CompanyPost /></ProtectedRoute>} />
+                  {/* <Route path="/private_msg_dash" element={<ProtectedRoute><PrivateGroupDash /></ProtectedRoute>} />
+                  <Route path="/createprivate_grp" element={<ProtectedRoute><CreatePrivateGrp /></ProtectedRoute>} /> */}
+                  <Route path="/private_msg_dash" element={<PrivateGroupDash />} />
+                  <Route path="/createprivate_grp" element={<CreatePrivateGrp />} />
                   <Route path="*" element={<Navigate to="/setup" />} />
                 </Routes>
               </main>
