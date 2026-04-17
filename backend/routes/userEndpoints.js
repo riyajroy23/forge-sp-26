@@ -76,210 +76,103 @@ const authenticateToken = (req, res) => {
 
 // Retrieve a user's profile
 // GET /users/:userId - Get a specific user's profile
-router.get('/users/:userId', async (req, res) => { 
-  try {
+router.get('/users/:userId', async (req, res) => {
     const userId = authenticateToken(req, res);
-    if (!userId) {
-      return;
+    if (!userId) return;
+
+    const { data: user, error } = await supabase
+        .from('User')
+        .select('*')
+        .eq('id', parseInt(req.params.userId))
+        .single();
+
+    if (error || !user) {
+        return res.status(404).json({ success: false, error: "User not found" });
     }
 
-    const user = await findUserById(parseInt(req.params.userId));
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: "User not found"
-      });
-    }
-
-    // return the specific user
-    res.status(200).json({
-      success: true,
-      data: {
-        user: removePassword(user)
-      }
-    });
-
-  } catch (error) {
-    console.error('Get user profile error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error while fetching user'
-    });
-  }
+    res.status(200).json({ success: true, data: { user: removePassword(user) } });
 });
 
 // Updates a user's profile information
 // PUT /users/:userId/profile - Update the current user's profile information
 router.put('/users/:userId/profile', async (req, res) => {
-  try {
-    const currentUserId = authenticateToken(req, res);
-    if (!currentUserId) {
-      return;
-    }
+  const currentUserId = authenticateToken(req, res);
+  if (!currentUserId) return;
 
-    // ensure the current user matches the profile being updated
-    const targetUserId = parseInt(req.params.userId);
+  const targetUserId = parseInt(req.params.userId);
+  if (currentUserId !== targetUserId) {
+      return res.status(403).json({ success: false, error: 'You do not have permission to update this profile' });
+  }
 
-    if (currentUserId !== targetUserId) {
-      return res.status(403).json({
-        success: false,
-        error: 'You do not have permission to update this profile'
-      });
-    }
+  const { first_name, last_name, major, career_interest, current_company, bio } = req.body;
 
-    // find the user
-    const user = await findUserById(currentUserId);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: "User not found"
-      });
-    }
-
-    // extract fields
-    const { first_name, last_name, major, career_interest, current_company, bio } = req.body;
-
-    // build update object with only provided fields
-    const updates = {};
-
-    if (first_name !== undefined) {
-      updates.first_name = first_name;
-    }
-
-    if (last_name !== undefined) {
+  const updates = {};
+  if (first_name !== undefined) {
+    updates.first_name = first_name;
+  }
+  if (last_name !== undefined) {
       updates.last_name = last_name;
-    }
-
-    if (major !== undefined) {
+  }
+  if (major !== undefined) {
       updates.major = major;
-    }
-
-    if (career_interest !== undefined) {
+  }
+  if (career_interest !== undefined) {
       updates.area_of_interest = career_interest;
-    }
-
-    if (current_company !== undefined) {
+  }
+  if (current_company !== undefined) {
       updates.current_company = current_company;
-    }
-
-    if (bio !== undefined) {
+  }
+  if (bio !== undefined) {
       updates.bio = bio;
-    }
+  }
 
-    // update updated_at timestamp
-    updates.updated_at = new Date().toISOString();
-
-    // update in database
-    const { data: updatedUser, error: updateError } = await supabase
+  const { data: updatedUser, error } = await supabase
       .from('User')
       .update(updates)
       .eq('id', currentUserId)
       .select()
       .single();
 
-    if (updateError) {
-      console.error('Database update error:', updateError);
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to update user profile'
-      });
-    }
-
-    // return updated user
-    res.status(200).json({
-      success: true, 
-      message: 'Profile updated successfully',
-      data: {
-        user: removePassword(updatedUser)
-      }
-    });
-
-  } catch (error) {
-    console.error('Update user profile error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error while trying to update user profile'
-    });
+  if (error) {
+      return res.status(500).json({ success: false, error: 'Failed to update user profile' });
   }
+
+  res.status(200).json({ success: true, message: 'Profile updated successfully', data: { user: removePassword(updatedUser) } });
 });
 
 // Retrieve users matching the specified filters
 // GET /users/search - Search for other users by filters
+// GET /users/search
 router.get('/users/search', async (req, res) => {
-  try {
-    const userId = authenticateToken(req, res);
-    if (!userId) {
-      return;
-    }
+  const userId = authenticateToken(req, res);
+  if (!userId) return;
 
-    // extract query parameters
-    const { username, career_interest, company, major, has_cooped_at } = req.query;
+  const { username, career_interest, company, major, has_cooped_at } = req.query;
 
-    // start with base query
-    let query = supabase
-      .from('User')
-      .select('*');
-
-
-    if (major) {
-      query = query.ilike('major', `%${major}%`);
-    }
-
-    if (current_company) {
-      query = query.ilike('current_company', `%${company}%`);
-    }
-
-    // execute query
-    const { data: results, error } = await query;
-
-    if (error) {
-      console.error('Search error:', error);
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to search users'
-      });
-    }
-
-    // client-side filtering for more complex conditions
-    let filteredResults = results || [];
-
-    if (career_interest) {
-      filteredResults = filteredResults.filter(u => 
-        u.area_of_interest && 
-        (typeof u.area_of_interest === 'string' 
-          ? u.area_of_interest.toLowerCase().includes(career_interest.toLowerCase())
-          : Array.isArray(u.area_of_interest) && u.area_of_interest.some(interest => 
-              interest.toLowerCase().includes(career_interest.toLowerCase())
-            )
-        )
-      );
-    }
-
-    if (has_cooped_at) {
-      filteredResults = filteredResults.filter(u =>
-        u.previous_experience && 
-        u.previous_experience.toLowerCase().includes(has_cooped_at.toLowerCase())
-      );
-    }
-
-    // return the users matching the filters
-    res.status(200).json({
-      success: true,
-      data: {
-        count: filteredResults.length, 
-        users: filteredResults.map(removePassword)
-      }
-    });
-
-  } catch (error) {
-    console.error('Search users error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error while searching users'
-    });
+  let query = supabase.from('User').select('*');
+  if (username) {
+    query = query.ilike('username', `%${username}%`);
   }
+  if (major) {
+      query = query.ilike('major', `%${major}%`);
+  }
+  if (company) {
+      query = query.ilike('current_company', `%${company}%`);
+  }
+  if (career_interest) {
+      query = query.ilike('area_of_interest', `%${career_interest}%`);
+  }
+  if (has_cooped_at) {
+      query = query.ilike('previous_experience', `%${has_cooped_at}%`);
+  }
+
+  const { data: results, error } = await query;
+
+  if (error) {
+      return res.status(500).json({ success: false, error: 'Failed to search users' });
+  }
+
+  res.status(200).json({ success: true, data: { count: results.length, users: results.map(removePassword) } });
 });
 
 export default router;
