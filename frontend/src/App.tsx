@@ -50,8 +50,10 @@ export default function App() {
                   <Route path="/company/:id" element={<ProtectedRoute><CompanyOverviewPage /></ProtectedRoute>} />
                   <Route path="/company_msgboard" element={<ProtectedRoute><CompanyMsgBoard /></ProtectedRoute>} />
                   <Route path="/companypost" element={<ProtectedRoute><CompanyPost /></ProtectedRoute>} />
-                  <Route path="/private_msg_dash" element={<ProtectedRoute><PrivateGroupDash /></ProtectedRoute>} />
-                  <Route path="/createprivate_grp" element={<ProtectedRoute><CreatePrivateGrp /></ProtectedRoute>} />
+                  {/* <Route path="/private_msg_dash" element={<ProtectedRoute><PrivateGroupDash /></ProtectedRoute>} />
+                  <Route path="/createprivate_grp" element={<ProtectedRoute><CreatePrivateGrp /></ProtectedRoute>} /> */}
+                  <Route path="/private_msg_dash" element={<PrivateGroupDash />} />
+                  <Route path="/createprivate_grp" element={<CreatePrivateGrp />} />
                   <Route path="*" element={<Navigate to="/setup" />} />
                 </Routes>
               </main>
