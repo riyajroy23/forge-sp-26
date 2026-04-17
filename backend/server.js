@@ -1,8 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const userAuthRoutes = require('./routes/userAuth');
+import userAuthRoutes from './routes/userAuth.js';
+import browseCompanyRoutes from './routes/browseCompanyEndpoints.js';
+import joinCompanyRoutes from './routes/joinCompany.js';
+import companyMessagesRoutes from './routes/companyMessages.js';
 
 const app = express();
 
@@ -11,13 +15,15 @@ app.use(express.json());
 
 // routes
 app.use('/api', userAuthRoutes);
+app.use('/api', browseCompanyRoutes);
+app.use('/api', joinCompanyRoutes);
+app.use('/api', companyMessagesRoutes);
 
 app.get('/', (req, res) => {
     res.send('<h1>Server is running!</h1>');
 });
 
-// specifying port to 3000, local host
-const port = process.env.PORT || 3000; 
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

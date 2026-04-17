@@ -1,5 +1,5 @@
 import express from 'express';
-import { supabase } from '../lib/supabaseClient.ts';
+import { supabase } from '../lib/supabaseClient.js';
 const router = express.Router();
 
 
@@ -46,13 +46,16 @@ const getUserIdFromToken = (token) => {
 // Return the full overview for a specific company (description, roles, FAQs)
 // GET /companies/:companyId/overview
 router.get('/companies/:companyId/overview', async (req, res) => {
+    console.log('Overview endpoint hit, companyId:', req.params.companyId);
     try {
         const userId = authenticateToken(req, res);
+        console.log('userId from token:', userId);
         if (!userId) {
             return;
         }
 
         const { companyId } = req.params;
+        console.log('Querying Supabase for company:', companyId);
 
         // fetch core company info
         const { data: company, error: companyError } = await supabase
@@ -62,9 +65,11 @@ router.get('/companies/:companyId/overview', async (req, res) => {
             .single();
 
         if (companyError || !company) {
+            console.error('Supabase company error:', companyError);
             return res.status(404).json({
                 success: false,
-                error: 'Company not found'
+                error: 'Company not found',
+                detail: companyError?.message
             });
         }
 
