@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const supabase = require('./supabase');
+
 
 // Return all public groups
 // GET /groups/public - return all public groups
