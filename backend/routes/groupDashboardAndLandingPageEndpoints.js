@@ -1,7 +1,6 @@
-const express = require('express');
-const router = express.Router();
+import express from 'express';
 import { supabase } from '../lib/supabaseClient.js';
-
+const router = express.Router();
 
 // Return all public groups
 // GET /groups/public - return all public groups
