@@ -46,20 +46,6 @@ const router = express.Router();
       return null;
     }
   };
-  
-  // generate mock JWT token (will be replaced later)
-  const generateToken = (user) => {
-    return `mock_jwt_${user.id}_${Date.now()}`;
-  };
-  
-  // extract user ID from mock token 
-  const getUserIdFromToken = (token) => {
-    if (!token || !token.startsWith('mock_jwt_')) {
-      return null;
-    }
-    const parts = token.split('_');
-    return parseInt(parts[2]);
-  };
 
   // remove password from user object
   const removePassword = (user) => {
