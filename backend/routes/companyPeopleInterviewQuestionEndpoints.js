@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const supabase = require('./supabase');
+import { supabase } from '../lib/supabaseClient.js';
 
 // Mock data for company people -- using hard-coded values, waiting for database connection
 // const company_people = [
