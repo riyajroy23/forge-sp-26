@@ -30,7 +30,7 @@ router.get('/groups/public/search/category/:category', async (req, res) => {
         .from('groups')
         .select('*')
         .eq('is_public', true)
-        .ilike('category', category);
+        .ilike('category', `%${category}%`);
 
     if (error || !data?.length) {
         return res.status(404).json("No public groups found in this category.");
@@ -51,7 +51,7 @@ router.get('/groups/public/search/location/:location', async (req, res) => {
         .from('groups')
         .select('*')
         .eq('is_public', true)
-        .ilike('location', location);
+        .ilike('location', `%${location}%`);
 
     if (error || !data?.length) {
         return res.status(404).json("No public groups found in this location.");
