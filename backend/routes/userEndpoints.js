@@ -5,85 +5,42 @@ const router = express.Router();
 
 // Helpers
 
-// find user by ID
-const findUserById = async (userId) => {
-  try {
-    const { data, error } = await supabase
-      .from('User')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-    
-    if (error) {
-      console.error('Error finding user by ID:', error);
-      return null;
-    }
-    
-    return data;
-  } catch (error) {
-    console.error('Error finding user by ID:', error);
-    return null;
-  }
-};
-
-// generate mock JWT token (change this later)
-const generateToken = (user) => {
-  return `mock_jwt_${user.id}_${Date.now()}`;
-};
-
-// extract user ID from mock token 
-const getUserIdFromToken = (token) => {
-  if (!token || !token.startsWith('mock_jwt_')) {
-    return null;
-  }
-  const parts = token.split('_');
-  return parseInt(parts[2]);
-};
-
-// remove password from user object
-const removePassword = (user) => {
-  const { password, ...userWithoutPassword } = user;
-  return userWithoutPassword;
-};
-
-// authenticate token middleware
-const authenticateToken = (req, res) => {
-  // check authentication token 
+// authenticate the user
+const authenticateUser = async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    res.status(401).json({
-      success: false,
-      error: 'No authorization token provided'
-    });
+    res.status(401).json({ success: false, error: 'No token provided' });
     return null;
   }
 
   const token = authHeader.replace('Bearer ', '');
 
-  // validate token
-  const userId = getUserIdFromToken(token);
-  if (!userId) {
-    res.status(401).json({
-      success: false,
-      error: 'Invalid or expired token'
-    });
+  const { data, error } = await supabase.auth.getUser(token);
+
+  if (error || !data?.user) {
+    res.status(401).json({ success: false, error: 'Invalid token' });
     return null;
   }
 
-  return userId;
+  return data.user; 
+};
+
+const removePassword = (user) => {
+  const { password, ...rest } = user;
+  return rest;
 };
 
 // Retrieve a user's profile
 // GET /users/:userId - Get a specific user's profile
 router.get('/users/:userId', async (req, res) => {
-    const userId = authenticateToken(req, res);
-    if (!userId) return;
+    const authUser = await authenticateUser(req, res);
+    if (!authUser) return;
 
     const { data: user, error } = await supabase
         .from('User')
         .select('*')
-        .eq('id', parseInt(req.params.userId))
+        .eq('id', req.params.userId)
         .single();
 
     if (error || !user) {
@@ -96,12 +53,14 @@ router.get('/users/:userId', async (req, res) => {
 // Updates a user's profile information
 // PUT /users/:userId/profile - Update the current user's profile information
 router.put('/users/:userId/profile', async (req, res) => {
-  const currentUserId = authenticateToken(req, res);
-  if (!currentUserId) return;
+  const authUser = await authenticateUser(req, res);
+  if (!authUser) return;
 
-  const targetUserId = parseInt(req.params.userId);
-  if (currentUserId !== targetUserId) {
-      return res.status(403).json({ success: false, error: 'You do not have permission to update this profile' });
+  if (authUser.id !== req.params.userId) {
+    return res.status(403).json({
+      success: false,
+      error: 'You do not have permission to update this profile'
+    });
   }
 
   const { first_name, last_name, major, career_interest, current_company, bio } = req.body;
@@ -129,7 +88,7 @@ router.put('/users/:userId/profile', async (req, res) => {
   const { data: updatedUser, error } = await supabase
       .from('User')
       .update(updates)
-      .eq('id', currentUserId)
+      .eq('id', authUser.id)
       .select()
       .single();
 
@@ -144,8 +103,8 @@ router.put('/users/:userId/profile', async (req, res) => {
 // GET /users/search - Search for other users by filters
 // GET /users/search
 router.get('/users/search', async (req, res) => {
-  const userId = authenticateToken(req, res);
-  if (!userId) return;
+  const authUser = await authenticateUser(req, res);
+  if (!authUser) return;
 
   const { username, career_interest, company, major, has_cooped_at } = req.query;
 
