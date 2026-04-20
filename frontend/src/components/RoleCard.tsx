@@ -25,7 +25,7 @@ export default function RoleCard({ role }: { role: Role }) {
       <button
         onClick={() => setLiked(l => !l)}
         aria-label={liked ? "Unlike role" : "Like role"}
-        className="shrink-0 p-1 rounded-full hover:bg-gray-100 transition"
+        className="!bg-transparent shrink-0 p-1 rounded-full hover:bg-gray-100 transition"
       >
         <Heart
           className={cn(
