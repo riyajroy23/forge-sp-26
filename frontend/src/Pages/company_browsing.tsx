@@ -164,6 +164,7 @@ export interface Company {
   roles: Role[];
   faqs: FAQ[];
   alumni: Alumni[];
+  navigate: string;
 }
 
 // ─── Mock data — replace getMockCompany with a real API call when backend is ready ──
@@ -210,6 +211,7 @@ function getMockCompany(): Company[] {
         { id: "a2", name: "Jordan Lee" },
         { id: "a3", name: "Sam Rivera" },
       ],
+      navigate: "/company/1",
     },
 
     {
@@ -240,6 +242,7 @@ function getMockCompany(): Company[] {
         { id: "a2", name: "Jordan Lee" },
         { id: "a3", name: "Sam Rivera" },
       ],
+      navigate: "/company/2",
     },
 
     {

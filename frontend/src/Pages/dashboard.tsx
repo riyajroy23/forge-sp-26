@@ -13,12 +13,13 @@ import {
   Star,
   ArrowRight,
 } from "lucide-react";
+import { useState } from "react";
 
 
 const FEATURED_COMPANIES = [
   {
     id: "1",
-    name: "Company 1",
+    name: "Amazon",
     tagline: "Software · Cloud · Data Analytics",
     alumni: 3,
     openRoles: 4,
@@ -26,17 +27,17 @@ const FEATURED_COMPANIES = [
   },
   {
     id: "2",
-    name: "Company 2",
-    tagline: "Fintech · Product · Design",
-    alumni: 2,
+    name: "Apple",
+    tagline: "Business · Fintech · Consulting",
+    alumni: 5,
     openRoles: 2,
     followed: true,
   },
   {
     id: "3",
-    name: "Company 3",
-    tagline: "Healthcare · Engineering · Research",
-    alumni: 5,
+    name: "Amada",
+    tagline: " Engineering · Mechanical · Hardware",
+    alumni: 2,
     openRoles: 6,
     followed: false,
   },
@@ -69,7 +70,7 @@ const RECENT_POSTS = [
 const OPEN_ROLES = [
   {
     id: "r1",
-    company: "Company 1",
+    company: "Apple",
     companyId: "1",
     title: "Software Engineer Co-op",
     salary: "$35/hr",
@@ -78,7 +79,7 @@ const OPEN_ROLES = [
   },
   {
     id: "r2",
-    company: "Company 1",
+    company: "Amazon",
     companyId: "1",
     title: "Data Analyst Co-op",
     salary: "$30/hr",
@@ -97,37 +98,43 @@ const OPEN_ROLES = [
 ];
 
 const STATS = [
-  { label: "Companies Saved", value: "4", icon: Building2, color: "bg-red-100 text-[#b11d1d]" },
-  { label: "New Messages", value: "12", icon: MessageSquare, color: "bg-red-100 text-[#b11d1d]" },
-  { label: "Active Groups", value: "3", icon: Users, color: "bg-red-100 text-[#b11d1d]" },
+  { label: "Companies Saved", value: "4", icon: Building2, color: "bg-red-100 text-[#b11d1d]", link: "/companybrowsing" },
+  { label: "New Messages", value: "12", icon: MessageSquare, color: "bg-red-100 text-[#b11d1d]", link: "/profile" },
+  { label: "Active Groups", value: "3", icon: Users, color: "bg-red-100 text-[#b11d1d]", link: "/private_msg_dash" },
 ];
 
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [followed, setFollowed] = useState(false);
+
+  const toggleFollow = () => {
+    setFollowed(prev => !prev);
+  };
+
 
   return (
     <div className="min-h-screen bg-[var(--color-lightgrey)] -m-8 p-8">
 
       <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#b11d1d] to-[#7a1212] p-10 text-white shadow-md flex items-center justify-between">
         <div>
-          <p className="text-white/90 text-md font-spacegrotesk mb-1">
+          <p className="text-white/90 text-lg font-spacegrotesk mb-1">
             Wednesday, March 25
           </p>
-          <h1 className="text-3xl font-fredoka font-semibold py-5">
+          <h1 className="text-4xl font-fredoka font-semibold py-5 text-[#000000]">
             Welcome back, Riya!
           </h1>
         </div>
         <div className="flex gap-6">
           <button
-            onClick={() => navigate("/company/1")}
-            className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white text-sm font-spacegrotesk transition border border-white/30"
+            onClick={() => navigate("/companybrowsing")}
+            className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-[#ffffff] text-md font-spacegrotesk transition border border-white/30"
           >
             Browse Co-ops
           </button>
           <button
             onClick={() => navigate("/setup")}
-            className="px-4 py-2 rounded-full bg-white text-[#b11d1d] text-sm font-spacegrotesk font-semibold hover:bg-white/90 transition"
+            className="px-4 py-2 rounded-full bg-[#ffffff] text-[#b11d1d] text-md font-spacegrotesk font-semibold hover:bg-white/90 transition"
           >
             My Profile
           </button>
@@ -135,17 +142,21 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-6">
-        {STATS.map(({ label, value, icon: Icon, color }) => (
-          <Card key={label} className="rounded-xl border-0 shadow-sm bg-black">
+        {STATS.map(({ label, value, icon: Icon, color, link }) => (
+          <Card key={label} 
+                className="rounded-xl border-0 bg-[#000000] cursor-pointer
+                          shadow-sm transition-all duration-200 ease-in-out
+                          hover:shadow-lg hover:scale-[1.02] hover:bg-[#111111]"
+                onClick={() => navigate(`${link}`)}>
             <CardContent className="py-4 px-10 flex items-center gap-4">
-              <div className={`w-15 h-15 rounded-full flex items-center justify-center shrink-0 ${color}`}>
+              <div className={`w-15 h-15 mr-3 rounded-full flex items-center justify-center shrink-0 ${color}`}>
                 <Icon className="w-10 h-10" />
               </div>
               <div>
-                <p className="text-3xl font-fredoka font-bold text-[#b11d1d] leading-none">
+                <p className="text-3xl mb-2 font-fredoka font-bold text-[#b11d1d] leading-none">
                   {value}
                 </p>
-                <p className="text-md text-white font-spacegrotesk mt-1">
+                <p className="text-lg text-[#ffffff] font-spacegrotesk mt-1">
                   {label}
                 </p>
               </div>
@@ -156,7 +167,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-3 gap-6">
         <div className="col-span-3">
-          <Card className="rounded-xl border-0 shadow-sm bg-gray-300">
+          <Card className="rounded-xl border-0 shadow-sm bg-gray-200">
             <CardContent className="py-4 px-7">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2 pl-2 pb-2">
@@ -176,14 +187,14 @@ export default function Dashboard() {
                 {FEATURED_COMPANIES.map((co) => (
                   <div
                     key={co.id}
-                    className="flex items-center bg-white gap-4 p-3 pl-5 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer group"
-                    onClick={() => navigate(`/company/${co.id}`)}
+                    className="flex items-center bg-gray-100 gap-4 p-3 pl-5 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer group"
                   >
                     {/* Company logo placeholder */}
-                    <div className="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
-                      <Building2 className="w-7 h-7 text-gray-400" />
+                    <div className="w-14 h-14 rounded-lg bg-[#b11d1d]/10 flex items-center justify-center shrink-0 ">
+                      <Building2 className="w-7 h-7 text-[#b11d1d]" />
                     </div>
-                    <div className="flex-1 min-w-0 pl-2">
+                    <div className="flex-1 min-w-0 pl-2"
+                         onClick={() => navigate(`/company/${co.id}`)}>
                       <p className="font-spacegrotesk font-semibold text-gray-900 text-lg">
                         {co.name}
                       </p>
@@ -200,10 +211,29 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      {co.followed && (
-                        <Heart className="w-4 h-4 fill-[#b11d1d] text-[#b11d1d]" />
-                      )}
-                      <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#b11d1d] transition" />
+                      <button
+                        onClick={toggleFollow}
+                        className="flex items-center gap-2 group"
+                        aria-label={followed ? "Unfollow company" : "Follow company"}
+                      >
+                        <Heart
+                          className={`
+                            w-4 h-4 transition-all duration-200
+                            ${followed
+                              ? "fill-[#b11d1d] text-[#b11d1d]"
+                              : "fill-transparent text-[#b11d1d] group-hover:fill-[#b11d1d]"
+                            }
+                          `}
+                        />
+
+                        <ChevronRight
+                          className="
+                            w-4 h-4 text-gray-300
+                            group-hover:text-[#b11d1d]
+                            transition
+                          "
+                        />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -214,7 +244,7 @@ export default function Dashboard() {
         </div>
 
         <div className="col-span-2">
-          <Card className="rounded-xl border-0 shadow-sm bg-gray-300">
+          <Card className="rounded-xl border-0 shadow-sm bg-gray-200">
             <CardContent className="py-4 px-7">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2 pl-2 pb-2">
@@ -234,7 +264,7 @@ export default function Dashboard() {
                 {OPEN_ROLES.map((role) => (
                   <div
                     key={role.id}
-                    className="flex items-center bg-white gap-4 p-3 pl-5 py-5 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer group"
+                    className="flex items-center bg-gray-50 gap-4 p-3 pl-5 py-5 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer group"
                     onClick={() => navigate(`/company/${role.companyId}`)}
                   >
                     <div className="w-14 h-14 rounded-lg bg-[#b11d1d]/10 flex items-center justify-center shrink-0">
@@ -272,7 +302,7 @@ export default function Dashboard() {
         </div>
 
         <div className="col-span-1">
-          <Card className="rounded-xl border-0 shadow-sm bg-gray-300 h-[460px]">
+          <Card className="rounded-xl border-0 shadow-sm bg-gray-200">
             <CardContent className="py-4 px-7">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2 pl-2 pb-2 ">
@@ -288,11 +318,11 @@ export default function Dashboard() {
                   View all <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 pb-3">
                 {RECENT_POSTS.map((post) => (
                   <div
                     key={post.id}
-                    className="p-3 pl-5 bg-white rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer"
+                    className="p-3 pl-5 bg-gray-50 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer"
                     onClick={() => navigate("/companypost")}
                   >
                     <p className="text-md font-spacegrotesk font-semibold text-gray-900 line-clamp-2 leading-snug">
@@ -311,7 +341,7 @@ export default function Dashboard() {
               </div>
               <button
                 onClick={() => navigate("/companypost")}
-                className="mt-3 w-full py-2 rounded-xl border border-dashed border-[#b11d1d]/40 text-[#b11d1d] text-xs font-spacegrotesk hover:bg-red-50 transition"
+                className="mt-3 w-full py-2 rounded-xl border border-dashed border-[#b11d1d]/40 text-[#b11d1d] text-sm font-spacegrotesk hover:bg-red-50 transition"
               >
                 + Create a post
               </button>
