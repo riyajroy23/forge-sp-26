@@ -61,6 +61,11 @@ export default function PrivateGroupDash() {
     fetchGroups();
   }, []);
 
+  // remove group from list when user leaves it
+  const handleLeave = (groupId: number) => {
+    setGroups(prev => prev.filter(g => g.id !== groupId));
+  };
+
   const filteredGroups = groups.filter((g) =>
     g.title?.toLowerCase().includes(search.toLowerCase())
   );
@@ -141,7 +146,7 @@ export default function PrivateGroupDash() {
                   <div className="flex flex-col gap-3">
                     {filteredGroups.length > 0 ? (
                       filteredGroups.map((r) => (
-                        <PrivateGroupCard key={r.id} group={r} />
+                        <PrivateGroupCard key={r.id} group={r} onLeave={handleLeave} />
                       ))
                     ) : (
                       <p className="text-sm text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
