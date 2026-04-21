@@ -13,6 +13,7 @@ import {
   Star,
   ArrowRight,
 } from "lucide-react";
+import { useState } from "react";
 
 
 const FEATURED_COMPANIES = [
@@ -54,7 +55,7 @@ const RECENT_POSTS = [
     id: 4,
     user: "Ben C",
     time: "4 hrs ago",
-    title: "Does anyone know how I can improve my portfolio?",
+    title: "Does anyone know how I can improve my portfolio?", 
     replies: 10,
   },
   {
@@ -105,14 +106,28 @@ const STATS = [
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [followed, setFollowed] = useState(false);
+
+  const toggleFollow = () => {
+    setFollowed(prev => !prev);
+  };
+  
+  const today = new Date();
+
+  const formattedDate = today.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+
 
   return (
     <div className="min-h-screen bg-[var(--color-lightgrey)] -m-8 p-8">
 
       <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#b11d1d] to-[#7a1212] p-10 text-white shadow-md flex items-center justify-between">
         <div>
-          <p className="text-white/90 text-md font-spacegrotesk mb-1">
-            Wednesday, March 25
+          <p className="text-white/90 text-lg font-spacegrotesk mb-1">
+            {formattedDate}
           </p>
           <h1 className="text-3xl font-fredoka font-semibold py-5">
             Welcome back, Riya!
@@ -200,10 +215,29 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      {co.followed && (
-                        <Heart className="w-4 h-4 fill-[#b11d1d] text-[#b11d1d]" />
-                      )}
-                      <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#b11d1d] transition" />
+                      <button
+                        onClick={toggleFollow}
+                        className="flex items-center gap-2 group"
+                        aria-label={followed ? "Unfollow company" : "Follow company"}
+                      >
+                        <Heart
+                          className={`
+                            w-4 h-4 transition-all duration-200
+                            ${followed
+                              ? "fill-[#b11d1d] text-[#b11d1d]"
+                              : "fill-transparent text-[#b11d1d] group-hover:fill-[#b11d1d]"
+                            }
+                          `}
+                        />
+
+                        <ChevronRight
+                          className="
+                            w-4 h-4 text-gray-300
+                            group-hover:text-[#b11d1d]
+                            transition
+                          "
+                        />
+                      </button>
                     </div>
                   </div>
                 ))}
