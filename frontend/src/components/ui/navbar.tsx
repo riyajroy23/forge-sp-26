@@ -20,7 +20,7 @@ export default function Navbar() {
     <nav style={{backgroundColor: "black"}} className="flex justify-between items-center p-6 w-full sticky top-0 z-50">
 
       <div className="flex items-center">
-        <Link to="/profile">
+        <Link to="/dashboard">
           <img src={logo} alt="MyApp Logo" className="pl-3 h-20 w-auto" style={{imageRendering: "crisp-edges"}} />
         </Link>
       </div>
