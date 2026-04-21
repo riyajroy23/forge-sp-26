@@ -8,7 +8,8 @@ export default function CompanyCard({ company }: { company: Company }) {
   const [followed, setFollowed] = useState(false);
 
   return (
-    <Card className="flex flex-row items-center gap-4 px-8 py-10 rounded-lg border border-gray-200 shadow-none">
+    <Card className="flex flex-row items-center gap-4 px-8 py-10 rounded-lg border border-gray-200 shadow-none"
+          onClick={() => company.navigate}>
       <div className="w-15 h-15 rounded bg-gray-300 shrink-0 flex items-center justify-center">
         <BarChart2 className="w-8 h-8 text-gray-500" />
       </div>

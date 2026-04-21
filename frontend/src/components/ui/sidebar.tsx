@@ -7,8 +7,8 @@ import companies from "@/assets/companies.png";
 
 const navItems = [
   { label: "Dashboard", icon: dashboard, path: "/dashboard" },
-  { label: "Companies", icon: companies, path: "/company/1" },
-  { label: "Groups",    icon: groups,    path: "/groups" },
+  { label: "Companies", icon: companies, path: "/companybrowsing" },
+  { label: "Groups",    icon: groups,    path: "/private_msg_dash" },
   { label: "Chats",     icon: chats,     path: "/chats" },
 ];
 
@@ -18,14 +18,36 @@ export default function Sidebar() {
       <div className="w-32 p-4 flex flex-col">
         <div className="flex flex-col gap-10 space-y-4">
           {navItems.map(({ label, icon, path }) => (
-            <Link to={path} key={label}>
+            <Link to={path} key={label} className="group">
               <Button
                 variant="ghost"
-                style={{ color: "white" }}
-                className="!bg-transparent hover:bg-gray-800 flex flex-col items-center gap-1 w-full"
+                className="
+                  !bg-transparent text-white w-full
+                  flex flex-col items-center gap-1
+                  transition-all duration-200 ease-in-out
+                  hover:bg-white/10 hover:scale-105
+                "
               >
-                <img src={icon} alt={label} className="w-8 h-8 object-contain" />
-                {label}
+                <img
+                  src={icon}
+                  alt={label}
+                  className="
+                    w-8 h-8 object-contain
+                    transition-all duration-200
+                    group-hover:scale-110 group-hover:opacity-90
+                  "
+                />
+
+                <span
+                  className="
+                    text-sm
+                    text-[#ffffff]
+                    transition-all duration-200
+                    group-hover:text-gray-200
+                  "
+                >
+                  {label}
+                </span>
               </Button>
             </Link>
           ))}

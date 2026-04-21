@@ -41,14 +41,12 @@ export default function PrivateGroupDash() {
     >
       <div className="flex flex-1 -m-8">
         {/* Red sidebar — placeholder, matches profile_page.tsx */}
-        <div className="w-32 bg-[#1a1a1a] p-4 flex flex-col shrink-0">
           <div className="flex flex-col gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <Card key={i} className="h-20 w-full bg-white">
                 <CardContent className="p-0" />
               </Card>
             ))}
-          </div>
         </div>
 
         {/* Page content */}
