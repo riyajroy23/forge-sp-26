@@ -82,20 +82,9 @@ export default function PrivateGroupDash() {
   );
 
   return (
-    <div className="flex flex-col min-h-screen w-screen">
+    <div className="flex flex-col min-h-screen">
       {/* Top black navbar — placeholder */}
-      <div className="w-full h-20 bg-black shrink-0" />
       <div className="flex flex-1">
-        {/* Red sidebar — placeholder */}
-        <div className="w-32 bg-[#B11D1D] p-4 flex flex-col shrink-0">
-          <div className="flex flex-col gap-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="h-20 w-full bg-white">
-                <CardContent className="p-0" />
-              </Card>
-            ))}
-          </div>
-        </div>
 
         {/* Page content */}
         <div className="flex-1 overflow-y-auto bg-[var(--color-lightgrey)] p-8">

@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Heart, Search, ChevronDown, ArrowLeft, BarChart2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {ButtonGroup,} from "@/components/ui/button-group";
-import {Table} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import RoleCard from "@/components/RoleCard";
 import FAQItem from "@/components/FAQItem";
@@ -37,26 +36,11 @@ export default function CompanyOverviewPage() {
   return (
     // Clicking anywhere outside the dropdown closes it
     <div
-      className="flex flex-col min-h-screen w-screen"
+      className="flex flex-col min-h-screen"
       onClick={() => {setMajorDropdownOpen(false);setPeopleDropdownOpen(false);
       }}
     >
-      {/* Top black navbar — placeholder, matches profile_page.tsx */}
-      <div className="w-full h-20 bg-black shrink-0" />
-
       <div className="flex flex-1">
-        {/* Red sidebar — placeholder, matches profile_page.tsx */}
-        <div className="w-32 bg-[#B11D1D] p-4 flex flex-col shrink-0">
-          <div className="flex flex-col gap-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="h-20 w-full bg-white">
-                <CardContent className="p-0" />
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Page content */}
         <div className="flex-1 overflow-y-auto bg-[var(--color-lightgrey)] p-8">
 
       {/* Back arrow */}
@@ -65,19 +49,18 @@ export default function CompanyOverviewPage() {
         className="flex items-center gap-1 text-gray-600 hover:text-black mb-4 transition"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span className="text-sm font-[var(--font-spacegrotesk)]">Back</span>
+        <span className="text-lg font-spacegrotesk">Back</span>
       </button>
 
-      {/* ── Company header card ───────────────────────────────────────────── */}
-      <Card className="mb-6 rounded-xl border-0 shadow-sm bg-white">
+      <Card className="my-13 rounded-xl border-0 shadow-sm bg-gray-200 px-8">
         <CardContent className="p-6 flex gap-6 items-start">
-          <div className="w-40 h-40 rounded-lg bg-[var(--color-medgrey)] shrink-0 flex items-center justify-center">
+          <div className="w-40 h-40 rounded-lg bg-[var(--color-medgrey)] shrink-0 flex items-center justify-center mr-6">
             <BarChart2 className="w-14 h-14 text-white" />
           </div>
 
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 pt-2">
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="headers text-2xl">{company.name}</h1>
+              <h1 className="headers text-4xl">{company.name}</h1>
               <button
                 onClick={e => { e.stopPropagation(); setFollowed(f => !f); }}
                 aria-label={followed ? "Unfollow company" : "Follow company"}
@@ -91,34 +74,37 @@ export default function CompanyOverviewPage() {
             </div>
 
             {/* Alumni strip */}
-            <div className="mt-3 inline-flex items-center gap-2 bg-blue-100 rounded-full px-3 py-1.5">
+            <div className="mt-4 inline-flex items-center gap-2 bg-blue-100 rounded-full px-4 py-1.5">
               <div className="flex -space-x-2">
                 {company.alumni.map(a => (
                   <div key={a.id} title={a.name}
                     className="w-7 h-7 rounded-full bg-gray-400 border-2 border-white shrink-0" />
                 ))}
               </div>
-              <span className="text-xs text-blue-800 font-semibold font-[var(--font-spacegrotesk)]">
+              <span className="text-lg text-blue-800 font-semibold font-[var(--font-spacegrotesk)]">
                 Alumni who work here
               </span>
             </div>
 
             {/* Main + People + Interview Button Bar*/}
-            <div className="mt-4 flex flex-wrap gap-3">
+            <div className="mt-5 flex flex-wrap gap-3">
               <ButtonGroup>
                   <Button
+                    className="text-md"
                     onClick={() => setActiveTab("main")}
                     variant={activeTab === "main" ? "default" : "outline"}
                   >
-                    Main
+                    Overview
                   </Button>
                   <Button
+                    className="text-md"
                     onClick={() => setActiveTab("people")}
                     variant={activeTab === "people" ? "default" : "outline"}
                   >
                     People
                   </Button>
                   <Button
+                    className="text-md"
                     onClick={() => setActiveTab("interviews")}
                     variant={activeTab === "interviews" ? "default" : "outline"}
                   >
@@ -132,43 +118,43 @@ export default function CompanyOverviewPage() {
 
       {activeTab === "main" && (
         <>
-          {/* ── Overview ─────────────────────────────────────────────────────── */}
-          <section className="mb-6">
-            <h2 className="headers text-xl mb-3">Overview</h2>
-            <Card className="rounded-xl border-0 shadow-sm bg-white">
-              <CardContent className="p-6">
-                <p className="text-sm text-gray-700 leading-relaxed font-[var(--font-spacegrotesk)]">
+          {/* Overview */}
+          <section className="mb-10">
+            <h2 className="headers text-3xl mb-5">Overview</h2>
+            <Card className="rounded-xl border-0 shadow-sm bg-gray-200">
+              <CardContent className="p-6 px-13">
+                <p className="text-xl text-gray-800 leading-relaxed font-medium">
                   {company.overview}
                 </p>
               </CardContent>
             </Card>
           </section>
 
-          {/* ── Roles offered ────────────────────────────────────────────────── */}
-          <section className="mb-6">
-            <h2 className="headers text-xl mb-3">Roles offered</h2>
-            <Card className="rounded-xl border-0 shadow-sm bg-white">
+          {/* Roles offered */}
+          <section className="mb-10">
+            <h2 className="headers text-3xl mb-5">Roles offered</h2>
+            <Card className="rounded-xl border-1 border-gray-200 shadow-sm">
               <CardContent className="p-6 flex flex-col gap-3">
                 {/* Search bar */}
-                <div className="relative">
+                <div className="relative bg-[#ffffff] rounded-xl">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md
+                    className="w-full pl-9 pr-3 py-2 text-xl border border-gray-200 rounded-md
                                font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
                                focus:ring-[var(--color-darkred)]/40"
                   />
                 </div>
 
                 {/* Major filter dropdown */}
-                <div className="relative w-44" onClick={e => e.stopPropagation()}>
+                <div className="relative w-44 bg-[#B11D1D]/20 text-[#B11D1D] rounded-xl my-2 mt-3" onClick={e => e.stopPropagation()}>
                   <button
                     onClick={() => setMajorDropdownOpen(o => !o)}
-                    className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-200
-                               rounded-md bg-white font-[var(--font-spacegrotesk)] hover:bg-gray-50
+                    className="flex items-center gap-2 px-3 py-1.5 text-lg border border-gray-200
+                               rounded-md font-[var(--font-spacegrotesk)] hover:bg-gray-50
                                transition w-full justify-between"
                   >
                     <span className="truncate">{majorFilter}</span>
@@ -181,9 +167,13 @@ export default function CompanyOverviewPage() {
                   </button>
 
                   {majorDropdownOpen && (
-                    <div className="absolute left-0 top-full mt-1 w-56 z-50
-                                    bg-white border border-gray-200 rounded-md
-                                    shadow-xl max-h-60 overflow-y-auto">
+                    <div className="absolute left-0 top-full mt-2 w-56 z-50
+                                    bg-[#ffffff] border border-gray-200 rounded-xl
+                                    shadow-lg
+                                    max-h-60 overflow-y-auto
+
+                                    transition-all duration-200 ease-out
+                                    animate-in fade-in zoom-in-95">
                       {ALL_MAJORS.map(m => (
                         <button
                           key={m}
@@ -192,7 +182,7 @@ export default function CompanyOverviewPage() {
                             setMajorDropdownOpen(false);
                           }}
                           className={cn(
-                            "w-full text-left px-4 py-2 text-sm font-[var(--font-spacegrotesk)]",
+                            "w-full text-left px-4 py-2 text-lg",
                             "hover:bg-gray-50 transition",
                             m === majorFilter && "font-semibold text-[var(--color-darkred)]"
                           )}
@@ -205,11 +195,11 @@ export default function CompanyOverviewPage() {
                 </div>
 
                 {/* Role list */}
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-4 my-3">
                   {filteredRoles.length > 0 ? (
                     filteredRoles.map(r => <RoleCard key={r.id} role={r} />)
                   ) : (
-                    <p className="text-sm text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
+                    <p className="text-md text-gray-400 text-center font-[var(--font-spacegrotesk)]">
                       No roles match your filters.
                     </p>
                   )}
@@ -218,23 +208,24 @@ export default function CompanyOverviewPage() {
             </Card>
           </section>
 
-          {/* ── FAQs ─────────────────────────────────────────────────────────── */}
-          <section className="mb-8">
-            <h2 className="headers text-xl mb-3">FAQs</h2>
-            <Card className="rounded-xl border-0 shadow-sm bg-white">
-              <CardContent className="px-6 py-2">
-                {company.faqs.map((faq, i) => (
-                  <FAQItem key={i} question={faq.question} answer={faq.answer} />
-                ))}
-              </CardContent>
-            </Card>
+          {/* FAQs */}
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold mb-5 text-black font-[var(--font-spacegrotesk)]">
+              FAQs
+            </h2>
+
+            <div className="divide-y divide-gray-400 border border-gray-300 space-y-2 bg-gray-200 rounded-xl p-5">
+              {company.faqs.map((faq, i) => (
+                <FAQItem key={i} question={faq.question} answer={faq.answer} />
+              ))}
+            </div>
           </section>
         </>
       )}
 
       {activeTab === "people" && (
         <>
-          {/* ── People ────────────────────────────────────────────────── */}
+          {/* People */}
           <section className="mb-6">
             <Card className="rounded-xl border-0 shadow-sm bg-white">
               <CardContent className="p-6 flex flex-col gap-3">
@@ -246,7 +237,7 @@ export default function CompanyOverviewPage() {
                     placeholder="Search for person..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md
+                    className="w-full pl-9 pr-3 py-2 text-md border border-gray-200 rounded-md
                                font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
                                focus:ring-[var(--color-darkred)]/40"
                   />
@@ -256,7 +247,7 @@ export default function CompanyOverviewPage() {
                 <div className="relative w-44" onClick={e => e.stopPropagation()}>
                   <button
                     onClick={() => setPeopleDropdownOpen(o => !o)}
-                    className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-200
+                    className="flex items-center gap-2 px-3 py-1.5 text-md border border-gray-200
                                rounded-md bg-white font-[var(--font-spacegrotesk)] hover:bg-gray-50
                                transition w-full justify-between"
                   >
@@ -281,7 +272,7 @@ export default function CompanyOverviewPage() {
                             setPeopleDropdownOpen(false);
                           }}
                           className={cn(
-                            "w-full text-left px-4 py-2 text-sm font-[var(--font-spacegrotesk)]",
+                            "w-full text-left px-4 py-2 text-md font-[var(--font-spacegrotesk)]",
                             "hover:bg-gray-50 transition",
                             m === peopleFilter && "font-semibold text-[var(--color-darkred)]"
                           )}
@@ -299,12 +290,12 @@ export default function CompanyOverviewPage() {
                     filteredPeople.map(p => 
                       <div key={p.id} className="rounded-lg border p-4">
                         <p className="font-semibold">{p.name}</p>
-                        <p className="text-sm text-gray-600">{p.role.join(", ")}</p>
-                        <p className="text-sm text-gray-500">{p.status}</p>
+                        <p className="text-md text-gray-600">{p.role.join(", ")}</p>
+                        <p className="text-md text-gray-500">{p.status}</p>
                       </div>
                     )
                   ) : (
-                    <p className="text-sm text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
+                    <p className="text-md text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
                       No roles match your filters.
                     </p>
                   )}
@@ -316,7 +307,7 @@ export default function CompanyOverviewPage() {
       )}
 
       {activeTab === "interviews" && (
-        <><h2 className="headers text-xl mb-3">Interview Questions</h2><Card className="rounded-xl border-0 shadow-sm bg-white">
+        <><h2 className="headers text-2xl mb-3">Interview Questions</h2><Card className="rounded-xl border-0 shadow-sm bg-white">
               <CardContent className="px-6 py-2">
                 {company.interviewQuestions.map((q, i) => (
                   <FAQItem key={i} question={q.question} answer={q.answer} />
@@ -331,7 +322,7 @@ export default function CompanyOverviewPage() {
   );
 }
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// Types
 export interface CompanyPeople {
   name: string;
   status: string;
@@ -380,7 +371,7 @@ interface Company {
   interviewQuestions : InterviewQuestion[];
 }
 
-// ─── Mock data — replace getMockCompany with a real API call when backend is ready ──
+// Mock data — replace getMockCompany with a real API call when backend is ready ──
 
 const ALL_MAJORS = [
   "All Majors",
@@ -407,7 +398,7 @@ function getMockCompany(_id: string): Company {
         description: "Work on full-stack features for our core product.",
         startDate: "01/06/2025",
         endDate: "31/08/2025",
-        salary: "$35/hr",
+        salary: "35/hr",
         majors: ["Computer Science", "Computer Engineering"],
       },
       {
@@ -416,7 +407,7 @@ function getMockCompany(_id: string): Company {
         description: "Analyze product metrics and build internal dashboards.",
         startDate: "01/06/2025",
         endDate: "31/08/2025",
-        salary: "$30/hr",
+        salary: "30/hr",
         majors: ["Data Science", "Mathematics", "Computer Science"],
       },
       {
@@ -425,7 +416,7 @@ function getMockCompany(_id: string): Company {
         description: "Design and prototype new user-facing features.",
         startDate: "01/06/2025",
         endDate: "31/08/2025",
-        salary: "$28/hr",
+        salary: "28/hr",
         majors: ["Interaction Design", "Graphic Design"],
       },
       {
@@ -434,7 +425,7 @@ function getMockCompany(_id: string): Company {
         description: "Support PMs in roadmap planning and stakeholder comms.",
         startDate: "01/09/2025",
         endDate: "31/12/2025",
-        salary: "$32/hr",
+        salary: "32/hr",
         majors: ["Business", "Computer Science", "Engineering"],
       },
     ],
