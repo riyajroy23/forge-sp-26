@@ -187,7 +187,7 @@ export default function Dashboard() {
                 {FEATURED_COMPANIES.map((co) => (
                   <div
                     key={co.id}
-                    className="flex items-center bg-gray-100 gap-4 p-3 pl-5 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer group"
+                    className="flex items-center bg-gray-50 gap-4 p-3 pl-5 rounded-xl border border-gray-100 hover:border-[#b11d1d]/30 hover:bg-red-50/30 transition cursor-pointer group"
                   >
                     {/* Company logo placeholder */}
                     <div className="w-14 h-14 rounded-lg bg-[#b11d1d]/10 flex items-center justify-center shrink-0 ">
@@ -303,9 +303,9 @@ export default function Dashboard() {
 
         <div className="col-span-1">
           <Card className="rounded-xl border-0 shadow-sm bg-gray-200">
-            <CardContent className="py-4 px-7">
+            <CardContent className="py-3 px-7">
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2 pl-2 pb-2 ">
+                <div className="flex items-center gap-2 pl-2 pb-2">
                   <MessageCircle className="w-10 h-10 text-[#b11d1d] mr-3" />
                   <h2 className="text-2xl font-spacegrotesk font-semibold text-gray-900">
                     Message Board
