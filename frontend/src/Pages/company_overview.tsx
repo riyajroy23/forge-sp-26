@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Heart, Search, ChevronDown, ArrowLeft, BarChart2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {ButtonGroup,} from "@/components/ui/button-group";
-import {Table} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import RoleCard from "@/components/RoleCard";
 import FAQItem from "@/components/FAQItem";
@@ -41,9 +40,7 @@ export default function CompanyOverviewPage() {
       onClick={() => {setMajorDropdownOpen(false);setPeopleDropdownOpen(false);
       }}
     >
-
       <div className="flex flex-1">
-        {/* Page content */}
         <div className="flex-1 overflow-y-auto bg-[var(--color-lightgrey)] p-8">
 
       {/* Back arrow */}
@@ -121,7 +118,7 @@ export default function CompanyOverviewPage() {
 
       {activeTab === "main" && (
         <>
-          {/* ── Overview ─────────────────────────────────────────────────────── */}
+          {/* Overview */}
           <section className="mb-10">
             <h2 className="headers text-3xl mb-5">Overview</h2>
             <Card className="rounded-xl border-0 shadow-sm bg-gray-200">
@@ -133,7 +130,7 @@ export default function CompanyOverviewPage() {
             </Card>
           </section>
 
-          {/* ── Roles offered ────────────────────────────────────────────────── */}
+          {/* Roles offered */}
           <section className="mb-10">
             <h2 className="headers text-3xl mb-5">Roles offered</h2>
             <Card className="rounded-xl border-1 border-gray-200 shadow-sm">
@@ -228,7 +225,7 @@ export default function CompanyOverviewPage() {
 
       {activeTab === "people" && (
         <>
-          {/* ── People ────────────────────────────────────────────────── */}
+          {/* People */}
           <section className="mb-6">
             <Card className="rounded-xl border-0 shadow-sm bg-white">
               <CardContent className="p-6 flex flex-col gap-3">
@@ -325,7 +322,7 @@ export default function CompanyOverviewPage() {
   );
 }
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// Types
 export interface CompanyPeople {
   name: string;
   status: string;
@@ -374,7 +371,7 @@ interface Company {
   interviewQuestions : InterviewQuestion[];
 }
 
-// ─── Mock data — replace getMockCompany with a real API call when backend is ready ──
+// Mock data — replace getMockCompany with a real API call when backend is ready ──
 
 const ALL_MAJORS = [
   "All Majors",
