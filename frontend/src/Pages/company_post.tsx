@@ -13,7 +13,7 @@ export default function CompanyPost() {
   const { id = "1" } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const post = getMockPost(id);
-  const posts = getMockPosts();
+  const posts = getMockPosts(id);
 
   const [search, setSearch] = useState("");
 
@@ -130,10 +130,10 @@ export interface Response {
   answer: string;
 }
 
-// ─── Mock data — replace getMockPosts with a real API call when backend is ready ──
+// ─── Mock data — replace with a real API call when backend is ready ──
 
-function getMockPost(_id: string): Post {
-  return {
+const ALL_MOCK_POSTS: Post[] = [
+  {
     id: 1,
     user: "Sophia A",
     time: "2 hrs ago",
@@ -149,7 +149,6 @@ function getMockPost(_id: string): Post {
         answer:
           "Hi I'm an alumni working for Company 1! If you'd like, I can join your group and offer some advice.",
       },
-
       {
         id: 3,
         user: "Adam C",
@@ -158,36 +157,64 @@ function getMockPost(_id: string): Post {
           "I'm also looking at the SWE interview process for Company 1, do you think I could join your group?",
       },
     ],
-  };
+  },
+  {
+    id: 4,
+    user: "Ben C",
+    time: "4 hrs ago",
+    questionTitle: "Does anyone know how I can improve my portfolio?",
+    questionText:
+      "I'm trying to figure out which projects should be highlighted in my portfolio, if any alumni are willing to take a look at it I can send a copy over private messages.",
+    responsesCount: 10,
+    responses: [
+      {
+        id: 5,
+        user: "Alyssa B",
+        time: "3 hrs ago",
+        answer:
+          "Happy to take a look! I'd recommend leading with your most impactful project — something with real users or measurable outcomes. Feel free to DM me.",
+      },
+      {
+        id: 6,
+        user: "Adam C",
+        time: "2 hrs ago",
+        answer:
+          "Also suggest keeping each project description concise — focus on what problem you solved, what tech you used, and the outcome. Recruiters skim fast.",
+      },
+    ],
+  },
+  {
+    id: 7,
+    user: "Colin H",
+    time: "5 hrs ago",
+    questionTitle:
+      "Alumni who have done a co-op at Company 1 before working there, what was your experience like?",
+    questionText:
+      "I've heard that Company 1 has a high return rate for co-ops, so I was wondering what the experiences of anyone who had a co-op there before working there.",
+    responsesCount: 3,
+    responses: [
+      {
+        id: 8,
+        user: "Alyssa B",
+        time: "4 hrs ago",
+        answer:
+          "I did a co-op here before converting full-time! The transition was really smooth — you already know the codebase and the team, so onboarding is way faster. Highly recommend.",
+      },
+      {
+        id: 9,
+        user: "Adam C",
+        time: "3 hrs ago",
+        answer:
+          "Same experience here. One tip: during your co-op, make sure to express interest in returning early. Managers appreciate knowing you're keen and it helps them plan headcount.",
+      },
+    ],
+  },
+];
+
+function getMockPost(id: string): Post {
+  return ALL_MOCK_POSTS.find((p) => p.id === Number(id)) ?? ALL_MOCK_POSTS[0];
 }
 
-function getMockPosts(): Post[] {
-  return [
-    {
-      id: 1,
-      user: "Sophia A",
-      time: "2 hrs ago",
-      questionTitle: "Alumni from Company 1! Any advice on interviews?",
-      questionText:
-        "Any alumni who work for Company 1, what is the SWE interview process like? I'm trying to set up a group with some other students who are looking to apply for the next co-op cycle. I keep hearing the technical interviews are really difficult, so any advice on how to approach it would be really helpful!",
-      responsesCount: 2,
-      responses: [
-        {
-          id: 2,
-          user: "Alyssa B",
-          time: "12:30 pm",
-          answer:
-            "Hi I'm an alumni working for Company 1! If you'd like, I can join your group and offer some advice.",
-        },
-
-        {
-          id: 3,
-          user: "Adam C",
-          time: "10:30 am",
-          answer:
-            "I'm also looking at the SWE interview process for Company 1, do you think I could join your group?",
-        },
-      ],
-    },
-  ];
+function getMockPosts(id: string): Post[] {
+  return ALL_MOCK_POSTS.filter((p) => p.id === Number(id));
 }

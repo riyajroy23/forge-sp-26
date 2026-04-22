@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import client from '../lib/streamChat.js';
+
 const router = express.Router();
-const client = require('../lib/streamChat');
 
 router.post('/token', async (req, res) => {
   if (!client) {
@@ -14,4 +15,4 @@ router.post('/token', async (req, res) => {
   res.status(200).json({ token });
 });
 
-module.exports = router;
+export default router;

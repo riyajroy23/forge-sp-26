@@ -1,51 +1,138 @@
-const express = require('express');
+import express from 'express';
+import { supabase } from '../lib/supabaseClient.js';
+
 const router = express.Router();
 
 
-// Create a new private group.
-// POST /groups - create a new group
-router.post('/groups', async (req, res) => {
+// Helpers
 
-    // extract fields
-    const { name, description, owner_id } =  req.body;
+// extract and validate auth token
+const authenticateToken = (req, res) => {
+    const authHeader = req.headers.authorization;
 
-    const { data, error } = await supabase
-        .from('groups')
-        .insert([{ name, description, owner_id }])
-        .select()
-        .single()
-
-    if (error || !data) {
-        return res.status(500).json("Cannot create a new group.");
+    if (!authHeader) {
+        res.status(401).json({
+            success: false,
+            error: 'No authorization token provided'
+        });
+        return null;
     }
 
-    // otherwise, confirm creation of group
-    return res.status(201).json(data);
+    const token = authHeader.replace('Bearer ', '');
+    const userId = getUserIdFromToken(token);
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            error: 'Invalid or expired token'
+        });
+        return null;
+    }
+
+    return userId;
+};
+
+// extract user ID from mock token
+const getUserIdFromToken = (token) => {
+    if (!token || !token.startsWith('mock_jwt_')) {
+        return null;
+    }
+    const parts = token.split('_');
+    return parseInt(parts[2]);
+};
+
+
+// Create a new private group
+// POST /groups
+router.post('/groups', async (req, res) => {
+    const userId = authenticateToken(req, res);
+    if (!userId) {
+        return;
+    }
+
+    const { name, description } = req.body;
+
+    if (!name) {
+        return res.status(400).json({
+            success: false,
+            error: 'Group name is required'
+        });
+    }
+
+    // create the group, setting the current user as the owner
+    const { data, error } = await supabase
+        .from('groups')
+        .insert([{ name, description, owner_id: userId }])
+        .select()
+        .single();
+
+    if (error || !data) {
+        console.error('Create group error:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Cannot create a new group.'
+        });
+    }
+
+    // automatically add the owner as a member of the group
+    const { error: memberError } = await supabase
+        .from('group_members')
+        .insert([{ group_id: data.id, user_id: userId }]);
+
+    if (memberError) {
+        console.error('Add owner as member error:', memberError);
+    }
+
+    return res.status(201).json({
+        success: true,
+        message: 'Group created successfully',
+        data
+    });
 });
 
 
 // Return all groups
 // GET /groups
 router.get('/groups', async (req, res) => {
+    const userId = authenticateToken(req, res);
+    if (!userId) {
+        return;
+    }
 
     const { data, error } = await supabase
         .from('groups')
-        .select('*')
+        .select('*');
 
-    if (error || !data?.length) {
-        return res.status(404).json("No groups found.");
+    if (error) {
+        console.error('Get groups error:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Failed to fetch groups.'
+        });
     }
 
-    // otherwise, return all groups if successful
-    return res.status(200).json(data);
+    if (!data?.length) {
+        return res.status(404).json({
+            success: false,
+            error: 'No groups found.'
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        data
+    });
 });
 
 
-// Return the group that has the specified groupId.
-// GET /groups/:groupId - return the group with that groupId
+// Return the group with the specified groupId
+// GET /groups/:groupId
 router.get('/groups/:groupId', async (req, res) => {
+    const userId = authenticateToken(req, res);
+    if (!userId) {
+        return;
+    }
 
-    // extract fields
     const groupId = parseInt(req.params.groupId);
 
     const { data, error } = await supabase
@@ -54,80 +141,158 @@ router.get('/groups/:groupId', async (req, res) => {
         .eq('id', groupId)
         .single();
 
-    // cannot find group with the specified id
     if (error || !data) {
-        return res.status(404).json("Group not found.");
+        return res.status(404).json({
+            success: false,
+            error: 'Group not found.'
+        });
     }
 
-    // otherwise, return group if successful
-    return res.status(200).json(data);
+    return res.status(200).json({
+        success: true,
+        data
+    });
 });
 
-// Delete the group with the specified groupdId.
-// DELETE /groups/:groupId - delete the group with that groupId
+
+// Delete the group with the specified groupId -- only the owner can delete the group
+// DELETE /groups/:groupId
 router.delete('/groups/:groupId', async (req, res) => {
-
-    // extract fields
-    const groupId = parseInt(req.params.groupId);
-
-    const { data, error } = await supabase
-        .from('groups')
-        .delete()
-        .eq('id', groupId)
-
-    // cannot find group with the specified groupId
-    if (error) {
-        return res.status(404).json("Group not found.");
+    const userId = authenticateToken(req, res);
+    if (!userId) {
+        return;
     }
 
-    // otherwise, confirm deletion of group
-    return res.status(200).json("Group deleted successfully.");
+    const groupId = parseInt(req.params.groupId);
+
+    // verify group exists
+    const { data: group, error: groupError } = await supabase
+        .from('groups')
+        .select('id, owner_id')
+        .eq('id', groupId)
+        .single();
+
+    if (groupError || !group) {
+        return res.status(404).json({
+            success: false,
+            error: 'Group not found.'
+        });
+    }
+
+    // ensure the current user is the owner
+    if (group.owner_id !== userId) {
+        return res.status(403).json({
+            success: false,
+            error: 'You do not have permission to delete this group.'
+        });
+    }
+
+    // remove all members first to avoid foreign key conflicts
+    const { error: membersError } = await supabase
+        .from('group_members')
+        .delete()
+        .eq('group_id', groupId);
+
+    if (membersError) {
+        console.error('Delete group members error:', membersError);
+        return res.status(500).json({
+            success: false,
+            error: 'Failed to delete group members.'
+        });
+    }
+
+    // delete the group
+    const { error } = await supabase
+        .from('groups')
+        .delete()
+        .eq('id', groupId);
+
+    if (error) {
+        console.error('Delete group error:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Failed to delete group.'
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        message: 'Group deleted successfully.'
+    });
 });
 
 
 // Add the specified user to the specified group
-// POST /groups/:groupId/members - add the user to the group
+// POST /groups/:groupId/members
 router.post('/groups/:groupId/members', async (req, res) => {
+    const userId = authenticateToken(req, res);
+    if (!userId) {
+        return;
+    }
 
-    // extract fields
     const groupId = parseInt(req.params.groupId);
-    const { userId } = req.body;
+    const { userId: targetUserId } = req.body;
 
-
-    // first check if group exists
+    // verify group exists
     const { data: group, error: groupError } = await supabase
         .from('groups')
         .select('*')
         .eq('id', groupId)
         .single();
 
-    // can't find group (doesn't exist)
     if (groupError || !group) {
-        return res.status(404).json("Group not found.");
+        return res.status(404).json({
+            success: false,
+            error: 'Group not found.'
+        });
+    }
+
+    // check if user is already a member
+    const { data: existing } = await supabase
+        .from('group_members')
+        .select('id')
+        .eq('group_id', groupId)
+        .eq('user_id', targetUserId)
+        .single();
+
+    if (existing) {
+        return res.status(409).json({
+            success: false,
+            error: 'User is already a member of this group.'
+        });
     }
 
     // add user to group
     const { data, error } = await supabase
         .from('group_members')
-        .insert([{ group_id: groupId, user_id: userId }])
+        .insert([{ group_id: groupId, user_id: targetUserId }])
         .select()
         .single();
 
-    // cannot add user
     if (error || !data) {
-        return res.status(404).json("Cannot add user to group.");
+        console.error('Add member error:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Cannot add user to group.'
+        });
     }
 
-    // otherwise, confirm addition of user to group
-    return res.status(201).json(data);
+    return res.status(201).json({
+        success: true,
+        message: 'User added to group successfully.',
+        data
+    });
 });
 
 
 // Return all members of a group
 // GET /groups/:groupId/members
 router.get('/groups/:groupId/members', async (req, res) => {
+    const userId = authenticateToken(req, res);
+    if (!userId) {
+        return;
+    }
 
-    // extract fields
     const groupId = parseInt(req.params.groupId);
 
     const { data, error } = await supabase
@@ -135,35 +300,80 @@ router.get('/groups/:groupId/members', async (req, res) => {
         .select('*, users(*)')
         .eq('group_id', groupId);
 
-    // cannot find members in group
-    if (error || !data?.length) {
-        return res.status(404).json("No members found for this group.");
+    if (error) {
+        console.error('Get members error:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Failed to fetch group members.'
+        });
     }
 
-    // otherwise, return members if successful
-    return res.status(200).json(data);
+    if (!data?.length) {
+        return res.status(404).json({
+            success: false,
+            error: 'No members found for this group.'
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        data
+    });
 });
 
 
-// Remove a member from the group with the specified groupId.
-// DELETE /groups/:groupId/members/:userId - remove the member who has that userId from the group
+// Remove a member from the group -- only the member themselves or the owner can remove
+// DELETE /groups/:groupId/members/:userId
 router.delete('/groups/:groupId/members/:userId', async (req, res) => {
+    const currentUserId = authenticateToken(req, res);
+    if (!currentUserId) {
+        return;
+    }
 
-    // extract fields
     const groupId = parseInt(req.params.groupId);
-    const userId = parseInt(req.params.userId);
+    const targetUserId = parseInt(req.params.userId);
+
+    // verify group exists and get owner
+    const { data: group, error: groupError } = await supabase
+        .from('groups')
+        .select('id, owner_id')
+        .eq('id', groupId)
+        .single();
+
+    if (groupError || !group) {
+        return res.status(404).json({
+            success: false,
+            error: 'Group not found.'
+        });
+    }
+
+    // only the member themselves or the group owner can remove a member
+    if (currentUserId !== targetUserId && currentUserId !== group.owner_id) {
+        return res.status(403).json({
+            success: false,
+            error: 'You do not have permission to remove this member.'
+        });
+    }
 
     const { error } = await supabase
         .from('group_members')
         .delete()
         .eq('group_id', groupId)
-        .eq('user_id', userId);
+        .eq('user_id', targetUserId);
 
-    // cannot find member in group
     if (error) {
-        return res.status(404).json("Member not found in this group.");
+        console.error('Remove member error:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Failed to remove member from group.'
+        });
     }
 
-    // otherwise, confirm deletion of member from group 
-    return res.status(200).json("Member removed successfully from group.");
+    return res.status(200).json({
+        success: true,
+        message: 'Member removed successfully from group.'
+    });
 });
+
+
+export default router;

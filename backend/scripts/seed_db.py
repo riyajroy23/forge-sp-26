@@ -79,18 +79,22 @@ CREATE TABLE public.users (
 
 def seed_companies(companies):
     try:
-        rows = [
-            {
+        rows = []
+        for c in companies:
+            row = {
                 "name": c[0],
+                "careers_page_url": c[1],
                 "overview": c[2],
                 "industry": c[3],
                 "headquarters_location": c[4],
+                "logo_url": c[5],
+                "website_url": c[6],
             }
-            for c in companies
-        ]
-        response = supabase.table("Company").upsert(rows, on_conflict="name").execute()
+            # Only include non-None values so we don't overwrite existing data with nulls
+            rows.append({k: v for k, v in row.items() if v is not None})
+        supabase.table("Company").upsert(rows, on_conflict="name").execute()
         print("Company seeding successful!")
-        print(response.data)
+        print(f"Upserted {len(rows)} companies.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         raise
