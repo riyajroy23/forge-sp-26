@@ -268,4 +268,163 @@ const router = express.Router();
     }
   });
 
+// helper to authenticate and return userId, sends 401 on failure
+const authenticateToken = (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    res.status(401).json({ success: false, error: 'No authorization token provided' });
+    return null;
+  }
+  const token = authHeader.replace('Bearer ', '');
+  const userId = getUserIdFromToken(token);
+  if (!userId) {
+    res.status(401).json({ success: false, error: 'Invalid or expired token' });
+    return null;
+  }
+  return userId;
+};
+
+// Get all users except the current user
+// GET /users
+router.get('/users', async (req, res) => {
+  try {
+    const currentUserId = authenticateToken(req, res);
+    if (!currentUserId) return;
+
+    const { data: users, error } = await supabase
+      .from('User')
+      .select('*')
+      .neq('id', currentUserId);
+
+    if (error) {
+      return res.status(500).json({ success: false, error: 'Failed to fetch users' });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: { users: (users || []).map(removePassword) }
+    });
+  } catch (error) {
+    console.error('Get users error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// Get current user's friends list
+// GET /friends
+router.get('/friends', async (req, res) => {
+  try {
+    const currentUserId = authenticateToken(req, res);
+    if (!currentUserId) return;
+
+    const { data: friendships, error } = await supabase
+      .from('friends')
+      .select('friend_id')
+      .eq('user_id', currentUserId);
+
+    if (error) {
+      return res.status(500).json({ success: false, error: 'Failed to fetch friends' });
+    }
+
+    const friendIds = (friendships || []).map(f => f.friend_id);
+
+    if (friendIds.length === 0) {
+      return res.status(200).json({ success: true, data: { friends: [] } });
+    }
+
+    const { data: friends, error: usersError } = await supabase
+      .from('User')
+      .select('*')
+      .in('id', friendIds);
+
+    if (usersError) {
+      return res.status(500).json({ success: false, error: 'Failed to fetch friend details' });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: { friends: (friends || []).map(removePassword) }
+    });
+  } catch (error) {
+    console.error('Get friends error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// Add a friend (bidirectional)
+// POST /friends  body: { friend_id }
+router.post('/friends', async (req, res) => {
+  try {
+    const currentUserId = authenticateToken(req, res);
+    if (!currentUserId) return;
+
+    const { friend_id } = req.body;
+    if (!friend_id) {
+      return res.status(400).json({ success: false, error: 'friend_id is required' });
+    }
+
+    if (currentUserId === parseInt(friend_id)) {
+      return res.status(400).json({ success: false, error: 'Cannot friend yourself' });
+    }
+
+    // check if already friends
+    const { data: existing } = await supabase
+      .from('friends')
+      .select('id')
+      .eq('user_id', currentUserId)
+      .eq('friend_id', friend_id)
+      .maybeSingle();
+
+    if (existing) {
+      return res.status(409).json({ success: false, error: 'Already friends' });
+    }
+
+    // insert bidirectional rows
+    const { error } = await supabase
+      .from('friends')
+      .insert([
+        { user_id: currentUserId, friend_id: parseInt(friend_id) },
+        { user_id: parseInt(friend_id), friend_id: currentUserId }
+      ]);
+
+    if (error) {
+      console.error('Add friend error:', error);
+      return res.status(500).json({ success: false, error: 'Failed to add friend' });
+    }
+
+    res.status(201).json({ success: true, message: 'Friend added successfully' });
+  } catch (error) {
+    console.error('Add friend error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// Remove a friend
+// DELETE /friends/:friendId
+router.delete('/friends/:friendId', async (req, res) => {
+  try {
+    const currentUserId = authenticateToken(req, res);
+    if (!currentUserId) return;
+
+    const friendId = parseInt(req.params.friendId);
+
+    // delete both directions
+    const { error } = await supabase
+      .from('friends')
+      .delete()
+      .or(
+        `and(user_id.eq.${currentUserId},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${currentUserId})`
+      );
+
+    if (error) {
+      return res.status(500).json({ success: false, error: 'Failed to remove friend' });
+    }
+
+    res.status(200).json({ success: true, message: 'Friend removed' });
+  } catch (error) {
+    console.error('Remove friend error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
 export default router;

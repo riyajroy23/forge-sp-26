@@ -2,9 +2,10 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "tsx server.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "@supabase/supabase-js": "^2.97.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "stream-chat": "^9.41.1"
   }
 }

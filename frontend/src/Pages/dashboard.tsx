@@ -18,7 +18,7 @@ import { useState } from "react";
 
 const FEATURED_COMPANIES = [
   {
-    id: "1",
+    id: "94939444-1771-49f7-8ff0-7aef09474261",
     name: "Amazon",
     tagline: "Software · Cloud · Data Analytics",
     alumni: 3,
@@ -26,17 +26,17 @@ const FEATURED_COMPANIES = [
     followed: false,
   },
   {
-    id: "2",
-    name: "Apple",
+    id: "76e8cda6-6ce6-4acc-bb9f-dde658324d58",
+    name: "Accenture",
     tagline: "Business · Fintech · Consulting",
     alumni: 5,
     openRoles: 2,
     followed: true,
   },
   {
-    id: "3",
-    name: "Amada",
-    tagline: " Engineering · Mechanical · Hardware",
+    id: "7bf2ceb0-8e08-4ddd-a80c-26b94b7e99d7",
+    name: "Chewy",
+    tagline: " Retail · Technology · Engineering",
     alumni: 2,
     openRoles: 6,
     followed: false,
@@ -55,7 +55,7 @@ const RECENT_POSTS = [
     id: 4,
     user: "Ben C",
     time: "4 hrs ago",
-    title: "Does anyone know how I can improve my portfolio?",
+    title: "Does anyone know how I can improve my portfolio?", 
     replies: 10,
   },
   {
@@ -111,6 +111,14 @@ export default function Dashboard() {
   const toggleFollow = () => {
     setFollowed(prev => !prev);
   };
+  
+  const today = new Date();
+
+  const formattedDate = today.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
 
 
   return (
@@ -119,7 +127,7 @@ export default function Dashboard() {
       <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#b11d1d] to-[#7a1212] p-10 text-white shadow-md flex items-center justify-between">
         <div>
           <p className="text-white/90 text-lg font-spacegrotesk mb-1">
-            Wednesday, March 25
+            {formattedDate}
           </p>
           <h1 className="text-4xl font-fredoka font-semibold py-5 text-[#000000]">
             Welcome back, Riya!

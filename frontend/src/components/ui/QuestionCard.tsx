@@ -1,14 +1,18 @@
 import { useState } from "react";
-import { BarChart2, MessageSquareText } from "lucide-react";
+import { BarChart2, ArrowUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { type Post } from "@/Pages/company_msg_board";
 import { useNavigate } from "react-router-dom";
 
 export default function QuestionCard({ post }: { post: Post }) {
   const [followed, setFollowed] = useState(false);
+  const navigate = useNavigate();
 
   return (
-    <Card className="flex flex-row items-start gap-3 px-10 py-11 rounded-lg border border-gray-200 shadow-none">
+    <Card
+      className="flex flex-row items-start gap-3 px-10 py-11 rounded-lg border border-gray-200 shadow-none cursor-pointer hover:bg-gray-50 transition"
+      onClick={() => navigate(`/companypost/${post.id}`)}
+    >
       <div className="w-6 h-6 rounded bg-gray-300 shrink-0 flex items-center justify-center">
         <BarChart2 className="w-4 h-4 text-gray-500 shrink-0 flex items-start justify-start" />
       </div>
@@ -29,7 +33,7 @@ export default function QuestionCard({ post }: { post: Post }) {
         </div>
 
         <button className="w-13 h-8 rounded outline outline-2 outline-gray-300 shrink-0 flex items-center justify-center gap-2">
-          <MessageSquareText className="w-4 h-4 text-gray-500 shrink-0 flex items-start justify-start" />
+          <ArrowUp className="w-4 h-4 text-gray-500 shrink-0 flex items-start justify-start" />
           <p className="text-gray-600 font-spacegrotesk">{post.responsesCount}</p>
         </button>
       </div>
