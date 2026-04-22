@@ -1,25 +1,25 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import recoopLogo from '../assets/images/recoop-logo2.png';
 import './SignupPage.css';
 import { api } from '../lib/api';
+import { saveAuth } from '../lib/auth';
 
-interface SignupPageProps {
-    onNavigateToSignin: () => void;
-    onSignupSuccess: () => void;
-}
-
-const SignupPage = ({ onNavigateToSignin, onSignupSuccess }: SignupPageProps) => {
+const SignupPage = () => {
+    const navigate = useNavigate();
     const [displayName, setDisplayName] = useState('');
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('STUDENT');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
         try {
             const res = await api.signup({
                 email,
@@ -30,13 +30,15 @@ const SignupPage = ({ onNavigateToSignin, onSignupSuccess }: SignupPageProps) =>
             });
 
             if (res.success) {
-                localStorage.setItem('token', res.data.token);
-                onSignupSuccess();
+                saveAuth(res.data.token, res.data.user);
+                navigate('/setup');
             } else {
                 setError(res.error || 'Signup failed');
             }
         } catch (err) {
             setError((err as Error).message || 'An error occurred during signup');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -107,13 +109,12 @@ const SignupPage = ({ onNavigateToSignin, onSignupSuccess }: SignupPageProps) =>
                             required
                         />
                     </div>
-
-                    <Button type="submit" className="signup-button">
-                        Sign up
+                    <Button type="submit" className="signup-button" disabled={loading}>
+                        {loading ? 'Signing up...' : 'Sign up'}
                     </Button>
                 </form>
                 <p className="signin-link">
-                    Already have an account? <a onClick={onNavigateToSignin} style={{ cursor: 'pointer' }}>Sign In</a>
+                    Already have an account? <a onClick={() => navigate('/signin')} style={{ cursor: 'pointer' }}>Sign In</a>
                 </p>
             </div>
         </div>

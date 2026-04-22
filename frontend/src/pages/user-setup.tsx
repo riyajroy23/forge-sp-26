@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Upload, User, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
+import { Pencil, Upload, User, Calendar as CalendarIcon } from "lucide-react";
 import { api } from "../lib/api";
 import recoopLogo from "../assets/images/recoop-logo2.png";
 import * as React from "react";
@@ -10,8 +10,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
-
-// ─── Reusable field row ───────────────────────────────────────────────────────
+import BadgeIcon from "@/components/ui/BadgeIcon";
 
 function FieldRow({
   label,
@@ -45,8 +44,6 @@ function FieldRow({
   );
 }
 
-// ─── UserSetup ────────────────────────────────────────────────────────────────
-
 export default function UserSetup() {
   const [date, setDate] = React.useState<Date>();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,18 +57,15 @@ export default function UserSetup() {
     if (!user) return;
     setMessage('');
     try {
-        const res = await api.updateProfile(user.user_id, {
-            bio,
-            major
-        });
-        if (res.success) {
-            setMessage('Profile updated successfully!');
-            setUser(res.data.user);
-        } else {
-            setMessage(res.error || 'Failed to update profile');
-        }
+      const res = await api.updateProfile(user.user_id, { bio, major });
+      if (res.success) {
+        setMessage('Profile updated successfully!');
+        setUser(res.data.user);
+      } else {
+        setMessage(res.error || 'Failed to update profile');
+      }
     } catch {
-        setMessage('An error occurred while saving.');
+      setMessage('An error occurred while saving.');
     }
   };
 
@@ -99,7 +93,6 @@ export default function UserSetup() {
   return (
     <div className="min-h-screen bg-[var(--color-lightgrey)] -m-8 p-8">
 
-      {/* ── Page header ──────────────────────────────────────────────────── */}
       <div className="mb-6">
         <h1 className="headers text-2xl">My Profile</h1>
         <p className="text-sm text-gray-500 font-[var(--font-spacegrotesk)] mt-1">
@@ -107,10 +100,8 @@ export default function UserSetup() {
         </p>
       </div>
 
-      {/* ── Profile hero card ────────────────────────────────────────────── */}
       <Card className="rounded-xl border-0 shadow-sm bg-white mb-6">
         <CardContent className="p-6 flex items-center gap-6">
-          {/* Avatar */}
           <div className="relative shrink-0">
             <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
               <User className="w-9 h-9 text-gray-400" />
@@ -124,12 +115,17 @@ export default function UserSetup() {
             </button>
           </div>
 
-          {/* Name / username */}
           <div className="flex-1">
             <p className="text-xl font-[var(--font-spacegrotesk)] font-bold text-gray-900">
               {user?.first_name || 'Riya'} {user?.last_name || 'Roy'}
             </p>
-            <p className="text-sm text-gray-500 font-[var(--font-spacegrotesk)]">@{user?.username || 'riyaroy'}</p>
+            {/* Username + badge inline */}
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <p className="text-sm text-gray-500 font-[var(--font-spacegrotesk)]">
+                @{user?.username || 'riyaroy'}
+              </p>
+              <BadgeIcon role={user?.role || user?.user_role} size={18} />
+            </div>
             <div className="mt-2 flex gap-2">
               <span className="px-2 py-0.5 rounded-full bg-[#b11d1d]/10 text-[#b11d1d] text-xs font-[var(--font-spacegrotesk)]">
                 Computer Science
@@ -142,94 +138,42 @@ export default function UserSetup() {
         </CardContent>
       </Card>
 
-      {/* ── Tabs ─────────────────────────────────────────────────────────── */}
       <Tabs defaultValue="profile">
         <TabsList className="bg-white border border-gray-200 rounded-xl p-1 mb-4 shadow-sm">
-          <TabsTrigger
-            value="profile"
-            className="rounded-lg font-[var(--font-spacegrotesk)] text-gray-500
-                       data-[state=active]:bg-[#b11d1d] data-[state=active]:text-white
-                       data-[state=active]:shadow-sm transition"
-          >
+          <TabsTrigger value="profile" className="rounded-lg font-[var(--font-spacegrotesk)] text-gray-500 data-[state=active]:bg-[#b11d1d] data-[state=active]:text-white data-[state=active]:shadow-sm transition">
             Profile
           </TabsTrigger>
-          <TabsTrigger
-            value="account"
-            className="rounded-lg font-[var(--font-spacegrotesk)] text-gray-500
-                       data-[state=active]:bg-[#b11d1d] data-[state=active]:text-white
-                       data-[state=active]:shadow-sm transition"
-          >
+          <TabsTrigger value="account" className="rounded-lg font-[var(--font-spacegrotesk)] text-gray-500 data-[state=active]:bg-[#b11d1d] data-[state=active]:text-white data-[state=active]:shadow-sm transition">
             Account Info
           </TabsTrigger>
-          <TabsTrigger
-            value="details"
-            className="rounded-lg font-[var(--font-spacegrotesk)] text-gray-500
-                       data-[state=active]:bg-[#b11d1d] data-[state=active]:text-white
-                       data-[state=active]:shadow-sm transition"
-          >
+          <TabsTrigger value="details" className="rounded-lg font-[var(--font-spacegrotesk)] text-gray-500 data-[state=active]:bg-[#b11d1d] data-[state=active]:text-white data-[state=active]:shadow-sm transition">
             Details
           </TabsTrigger>
         </TabsList>
 
-        {/* ── Profile tab ──────────────────────────────────────────────────── */}
         <TabsContent value="profile">
           <Card className="rounded-xl border-0 shadow-sm bg-white">
             <CardContent className="p-6">
-              <h2 className="text-base font-[var(--font-spacegrotesk)] font-semibold text-gray-900 mb-4">
-                Public Profile
-              </h2>
-
-              {/* Display name */}
+              <h2 className="text-base font-[var(--font-spacegrotesk)] font-semibold text-gray-900 mb-4">Public Profile</h2>
               <div className="mb-4">
-                <label className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide block mb-1">
-                  Display Name
-                </label>
-                <input
-                  type="text"
-                  defaultValue={user?.first_name ? `${user.first_name} ${user.last_name || ''}` : "Riya Roy"}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg
-                             font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
-                             focus:ring-[#b11d1d]/40 text-gray-800"
-                />
+                <label className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide block mb-1">Display Name</label>
+                <input type="text" defaultValue={user?.first_name ? `${user.first_name} ${user.last_name || ''}` : "Riya Roy"}
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2 focus:ring-[#b11d1d]/40 text-gray-800" />
               </div>
-
-              {/* Username */}
               <div className="mb-4">
-                <label className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide block mb-1">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  defaultValue={user?.username ? `@${user.username}` : "@riyaroy"}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg
-                             font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
-                             focus:ring-[#b11d1d]/40 text-gray-800"
-                />
+                <label className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide block mb-1">Username</label>
+                <input type="text" defaultValue={user?.username ? `@${user.username}` : "@riyaroy"}
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2 focus:ring-[#b11d1d]/40 text-gray-800" />
               </div>
-
-              {/* Bio */}
               <div className="mb-5">
-                <label className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide block mb-1">
-                  Bio
-                </label>
-                <Textarea
-                  placeholder="Tell us a little about yourself..."
-                  className="font-[var(--font-spacegrotesk)] text-sm text-gray-800 focus:ring-2
-                             focus:ring-[#b11d1d]/40 border-gray-200 resize-none"
-                  rows={3}
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                />
+                <label className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide block mb-1">Bio</label>
+                <Textarea placeholder="Tell us a little about yourself..."
+                  className="font-[var(--font-spacegrotesk)] text-sm text-gray-800 focus:ring-2 focus:ring-[#b11d1d]/40 border-gray-200 resize-none"
+                  rows={3} value={bio} onChange={(e) => setBio(e.target.value)} />
               </div>
-
               {message && <p className="mb-4 text-sm font-medium text-green-600 font-[var(--font-spacegrotesk)]">{message}</p>}
-
               <div className="flex justify-end">
-                <button
-                  onClick={handleSave}
-                  className="px-4 py-2 rounded-lg bg-[#b11d1d] text-white text-sm
-                             font-[var(--font-spacegrotesk)] hover:bg-[#8e1616] transition"
-                >
+                <button onClick={handleSave} className="px-4 py-2 rounded-lg bg-[#b11d1d] text-white text-sm font-[var(--font-spacegrotesk)] hover:bg-[#8e1616] transition">
                   Save Changes
                 </button>
               </div>
@@ -237,29 +181,18 @@ export default function UserSetup() {
           </Card>
         </TabsContent>
 
-        {/* ── Account Info tab ─────────────────────────────────────────────── */}
         <TabsContent value="account">
           <Card className="rounded-xl border-0 shadow-sm bg-white">
             <CardContent className="p-6">
-              <h2 className="text-base font-[var(--font-spacegrotesk)] font-semibold text-gray-900 mb-2">
-                Account Information
-              </h2>
+              <h2 className="text-base font-[var(--font-spacegrotesk)] font-semibold text-gray-900 mb-2">Account Information</h2>
               <FieldRow label="Email" value={user?.email || "riya@example.com"} onEdit={() => {}} />
               <FieldRow label="Date of Birth" value="January 1, 2002" onEdit={() => {}} />
-
-              {/* Resume */}
               <div className="flex items-center justify-between py-4 border-b border-gray-100">
                 <div>
-                  <p className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide mb-0.5">
-                    Resume
-                  </p>
+                  <p className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide mb-0.5">Resume</p>
                   <p className="text-sm font-[var(--font-spacegrotesk)] text-gray-800">resume.pdf</p>
                 </div>
-                <button
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200
-                             text-gray-500 text-xs font-[var(--font-spacegrotesk)] hover:border-[#b11d1d]
-                             hover:text-[#b11d1d] transition bg-white"
-                >
+                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 text-xs font-[var(--font-spacegrotesk)] hover:border-[#b11d1d] hover:text-[#b11d1d] transition bg-white">
                   <Upload className="w-3 h-3" />
                   Upload new
                 </button>
@@ -268,33 +201,17 @@ export default function UserSetup() {
           </Card>
         </TabsContent>
 
-        {/* ── Details tab ──────────────────────────────────────────────────── */}
         <TabsContent value="details">
           <Card className="rounded-xl border-0 shadow-sm bg-white">
             <CardContent className="p-6">
-              <h2 className="text-base font-[var(--font-spacegrotesk)] font-semibold text-gray-900 mb-2">
-                Academic Details
-              </h2>
-
+              <h2 className="text-base font-[var(--font-spacegrotesk)] font-semibold text-gray-900 mb-2">Academic Details</h2>
               <FieldRow label="Major" value={major || "Computer Science"} onEdit={() => {}} />
               <FieldRow label="Minor(s)" value="Mathematics" onEdit={() => {}} />
-
-              {/* Graduation Year */}
               <div className="py-4">
-                <p className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide mb-2">
-                  Graduation Date
-                </p>
+                <p className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide mb-2">Graduation Date</p>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-60 justify-start text-left text-sm font-[var(--font-spacegrotesk)]",
-                        "border-gray-200 bg-white hover:border-[#b11d1d] hover:bg-white",
-                        "focus:ring-2 focus:ring-[#b11d1d]/40",
-                        !date && "text-gray-400"
-                      )}
-                    >
+                    <Button variant="outline" className={cn("w-60 justify-start text-left text-sm font-[var(--font-spacegrotesk)]", "border-gray-200 bg-white hover:border-[#b11d1d] hover:bg-white", "focus:ring-2 focus:ring-[#b11d1d]/40", !date && "text-gray-400")}>
                       <CalendarIcon className="mr-2 w-4 h-4 text-gray-400" />
                       {date ? format(date, "MMMM yyyy") : "Pick a date"}
                     </Button>
@@ -308,7 +225,6 @@ export default function UserSetup() {
           </Card>
         </TabsContent>
       </Tabs>
-
     </div>
   );
 }
