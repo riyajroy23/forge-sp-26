@@ -1,0 +1,204 @@
+* {
+    box-sizing: border-box !important;
+}
+
+.account-settings-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    font-family: 'Fredoka', sans-serif;
+    color: #1a1a1a;
+}
+
+.account-settings-navbar {
+    height: 100px;
+    background-color: #0d0000;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* User nav stays on the right */
+    padding: 0 4rem;
+    position: relative;
+    /* Anchor for absolute centering */
+}
+
+.account-settings-logo {
+    height: 60px;
+    /* Significantly smaller */
+    width: auto;
+    object-fit: contain;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    /* Center horizontally */
+}
+
+.account-settings-user-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    color: white;
+}
+
+.user-greeting {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.user-avatar-small {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #fbc2a1;
+    /* Avatar light orange background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.user-avatar-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.account-settings-content {
+    max-width: 1000px;
+    margin: 4rem auto;
+    padding: 0 4rem;
+    width: 100%;
+    text-align: left;
+}
+
+.account-settings-title {
+    font-size: 2.8rem;
+    font-weight: 600;
+    margin-bottom: 4rem;
+    text-align: left;
+}
+
+/* Base Section Styles */
+.settings-section {
+    margin-bottom: 3rem;
+}
+
+.settings-section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2.5rem;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    min-height: 48px;
+}
+
+.settings-label {
+    width: 250px;
+    /* Fixed width for labels to align content */
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+/* Manage Profile specific */
+.avatar-selection {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.avatar-option {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.avatar-option img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-option.selected {
+    box-shadow: 0 0 0 3px white, 0 0 0 5px #a83232;
+}
+
+.avatar-option:hover {
+    transform: scale(1.05);
+}
+
+.display-name-value {
+    font-size: 1.3rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    cursor: pointer;
+}
+
+.chevron-icon {
+    color: #1a1a1a;
+}
+
+/* Account Info specific */
+.settings-input-container {
+    flex: 1;
+    max-width: 450px;
+}
+
+.settings-input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border: 2px solid #555;
+    border-radius: 6px;
+    background-color: white;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+
+.settings-input:focus {
+    outline: none;
+    border-color: #a83232;
+}
+
+.settings-divider {
+    height: 1px;
+    background-color: #1a1a1a;
+    margin: 3rem 0;
+    width: 100%;
+}
+
+.upload-avatar-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    border: 2px dashed #999;
+    cursor: pointer;
+    color: #555;
+    transition: all 0.2s;
+    font-size: 0.75rem;
+    padding: 0;
+}
+
+.upload-avatar-button:hover {
+    border-color: #a83232;
+    color: #a83232;
+    background-color: #fff4f4;
+}

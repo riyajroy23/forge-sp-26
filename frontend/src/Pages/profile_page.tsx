@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { api } from "../lib/api";
 
 const ProfilePage = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

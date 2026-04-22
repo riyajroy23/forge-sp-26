@@ -10,8 +10,8 @@ const getHeaders = () => {
 
 export const api = {
     // Auth endpoints
-    async login(data: any) {
-        const response = await fetch(`${BASE_URL}/auth/login`, {
+    async login(data: Record<string, unknown>) {
+        const response = await fetch(`${BASE_URL}/login`, {
             method: 'POST',
             headers: getHeaders(),
             body: JSON.stringify(data)
@@ -19,8 +19,8 @@ export const api = {
         return response.json();
     },
 
-    async signup(data: any) {
-        const response = await fetch(`${BASE_URL}/auth/signup`, {
+    async signup(data: Record<string, unknown>) {
+        const response = await fetch(`${BASE_URL}/signup`, {
             method: 'POST',
             headers: getHeaders(),
             body: JSON.stringify(data)
@@ -29,7 +29,7 @@ export const api = {
     },
 
     async getMe() {
-        const response = await fetch(`${BASE_URL}/auth/me`, {
+        const response = await fetch(`${BASE_URL}/me`, {
             method: 'GET',
             headers: getHeaders()
         });
@@ -45,7 +45,7 @@ export const api = {
         return response.json();
     },
 
-    async updateProfile(userId: number, data: any) {
+    async updateProfile(userId: number, data: Record<string, unknown>) {
         const response = await fetch(`${BASE_URL}/users/${userId}/profile`, {
             method: 'PUT',
             headers: getHeaders(),

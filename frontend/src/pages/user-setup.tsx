@@ -1,13 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format } from "date-fns";
-import * as React from "react";
-import { Calendar as CalendarIcon, Pencil, Upload, User } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Pencil, Upload, User, ChevronRight } from "lucide-react";
+import { api } from "../lib/api";
+import recoopLogo from "../assets/images/recoop-logo2.png";
 
 // ─── Reusable field row ───────────────────────────────────────────────────────
 
@@ -47,6 +42,51 @@ function FieldRow({
 
 export default function UserSetup() {
   const [date, setDate] = React.useState<Date>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [user, setUser] = React.useState<any>(null);
+  const [bio, setBio] = React.useState('');
+  const [major, setMajor] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
+  const [message, setMessage] = React.useState('');
+
+  const handleSave = async () => {
+    if (!user) return;
+    setMessage('');
+    try {
+        const res = await api.updateProfile(user.user_id, {
+            bio,
+            major
+        });
+        if (res.success) {
+            setMessage('Profile updated successfully!');
+            setUser(res.data.user);
+        } else {
+            setMessage(res.error || 'Failed to update profile');
+        }
+    } catch {
+        setMessage('An error occurred while saving.');
+    }
+  };
+
+  React.useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const currentUser = await api.getCurrentUser();
+        if (currentUser) {
+          setUser(currentUser);
+          setBio(currentUser.bio || '');
+          setMajor(currentUser.major || '');
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  if (loading) return <div className="min-h-screen bg-[var(--color-lightgrey)] p-10 flex items-center justify-center">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-[var(--color-lightgrey)] -m-8 p-8">
@@ -79,9 +119,9 @@ export default function UserSetup() {
           {/* Name / username */}
           <div className="flex-1">
             <p className="text-xl font-[var(--font-spacegrotesk)] font-bold text-gray-900">
-              Riya Roy
+              {user?.first_name || 'Riya'} {user?.last_name || 'Roy'}
             </p>
-            <p className="text-sm text-gray-500 font-[var(--font-spacegrotesk)]">@riyaroy</p>
+            <p className="text-sm text-gray-500 font-[var(--font-spacegrotesk)]">@{user?.username || 'riyaroy'}</p>
             <div className="mt-2 flex gap-2">
               <span className="px-2 py-0.5 rounded-full bg-[#b11d1d]/10 text-[#b11d1d] text-xs font-[var(--font-spacegrotesk)]">
                 Computer Science
@@ -138,7 +178,7 @@ export default function UserSetup() {
                 </label>
                 <input
                   type="text"
-                  defaultValue="Riya Roy"
+                  defaultValue={user?.first_name ? `${user.first_name} ${user.last_name || ''}` : "Riya Roy"}
                   className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg
                              font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
                              focus:ring-[#b11d1d]/40 text-gray-800"
@@ -152,7 +192,7 @@ export default function UserSetup() {
                 </label>
                 <input
                   type="text"
-                  defaultValue="@riyaroy"
+                  defaultValue={user?.username ? `@${user.username}` : "@riyaroy"}
                   className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg
                              font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
                              focus:ring-[#b11d1d]/40 text-gray-800"
@@ -169,11 +209,16 @@ export default function UserSetup() {
                   className="font-[var(--font-spacegrotesk)] text-sm text-gray-800 focus:ring-2
                              focus:ring-[#b11d1d]/40 border-gray-200 resize-none"
                   rows={3}
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
                 />
               </div>
 
+              {message && <p className="mb-4 text-sm font-medium text-green-600 font-[var(--font-spacegrotesk)]">{message}</p>}
+
               <div className="flex justify-end">
                 <button
+                  onClick={handleSave}
                   className="px-4 py-2 rounded-lg bg-[#b11d1d] text-white text-sm
                              font-[var(--font-spacegrotesk)] hover:bg-[#8e1616] transition"
                 >
@@ -191,7 +236,7 @@ export default function UserSetup() {
               <h2 className="text-base font-[var(--font-spacegrotesk)] font-semibold text-gray-900 mb-2">
                 Account Information
               </h2>
-              <FieldRow label="Email" value="riya@example.com" onEdit={() => {}} />
+              <FieldRow label="Email" value={user?.email || "riya@example.com"} onEdit={() => {}} />
               <FieldRow label="Date of Birth" value="January 1, 2002" onEdit={() => {}} />
 
               {/* Resume */}
@@ -223,7 +268,7 @@ export default function UserSetup() {
                 Academic Details
               </h2>
 
-              <FieldRow label="Major" value="Computer Science" onEdit={() => {}} />
+              <FieldRow label="Major" value={major || "Computer Science"} onEdit={() => {}} />
               <FieldRow label="Minor(s)" value="Mathematics" onEdit={() => {}} />
 
               {/* Graduation Year */}
@@ -255,6 +300,7 @@ export default function UserSetup() {
           </Card>
         </TabsContent>
       </Tabs>
+
     </div>
   );
 }

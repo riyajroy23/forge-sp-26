@@ -35,8 +35,8 @@ const SignupPage = ({ onNavigateToSignin, onSignupSuccess }: SignupPageProps) =>
             } else {
                 setError(res.error || 'Signup failed');
             }
-        } catch (err: any) {
-            setError(err.message || 'An error occurred during signup');
+        } catch (err) {
+            setError((err as Error).message || 'An error occurred during signup');
         }
     };
 

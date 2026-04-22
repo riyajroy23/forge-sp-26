@@ -10,10 +10,12 @@ import CreatePrivateGrp from "./Pages/create_private_grp";
 import CompanyMsgBoard from "./Pages/company_msg_board";
 import CompanyPost from "./Pages/company_post";
 
-import LaunchScreen from "./components/LaunchScreen";
-import SignupPage from "./components/SignupPage";
-import SigninPage from "./components/SigninPage";
+import LaunchScreen from "./Pages/LaunchScreen";
+import SignupPage from "./Pages/SignupPage";
+import SigninPage from "./Pages/SigninPage";
+import AccountSettings from "./Pages/AccountSettings";
 import ProtectedRoute from "./components/ProtectedRoute";
+import "./App.css";
 
 import Navbar from "@/components/ui/navbar";
 import Sidebar from "@/components/ui/sidebar";
@@ -47,6 +49,7 @@ export default function App() {
               <main className="flex-1 p-8">
                 <Routes>
                   <Route path="/setup" element={<ProtectedRoute><UserSetup /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                   <Route path="/company/:id" element={<ProtectedRoute><CompanyOverviewPage /></ProtectedRoute>} />
                   <Route path="/company_msgboard" element={<ProtectedRoute><CompanyMsgBoard /></ProtectedRoute>} />
@@ -54,6 +57,7 @@ export default function App() {
                   <Route path="/companybrowsing" element={<ProtectedRoute><CompanyBrowsing /></ProtectedRoute>} />
                   <Route path="/private_msg_dash" element={<ProtectedRoute><PrivateGroupDash /></ProtectedRoute>} />
                   <Route path="/createprivate_grp" element={<ProtectedRoute><CreatePrivateGrp /></ProtectedRoute>} />
+                  <Route path="/account" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
                   <Route path="*" element={<Navigate to="/setup" />} />
                 </Routes>
               </main>
@@ -61,7 +65,6 @@ export default function App() {
           </div>
         }
       />
-
       {/* default fallback */}
       <Route path="*" element={<Navigate to="/signup" />} />
     </Routes>

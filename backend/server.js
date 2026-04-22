@@ -12,8 +12,8 @@ app.use(express.json());
 app.use('/api/chat', require('./routes/chat'));
 
 // routes
-app.use('/api', userAuthRoutes);
-app.use('/api', userEndpointsRoutes);
+app.use('/api', userAuthRoutes.default || userAuthRoutes);
+app.use('/api', userEndpointsRoutes.default || userEndpointsRoutes);
 
 app.get('/', (req, res) => {
     res.send('<h1>Server is running!</h1>');
