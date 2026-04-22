@@ -41,27 +41,55 @@ const getUserIdFromToken = (token) => {
 };
 
 
+// Return all companies with their roles (for browsing page)
+// GET /companies
+router.get('/companies', async (req, res) => {
+    try {
+        const { data: companies, error } = await supabase
+            .from('Company')
+            .select('id, name, industry, overview, headquarters_location')
+            .not('overview', 'is', null)
+            .neq('overview', 'Who We Are')
+            .neq('overview', "hasn't submitted an overview")
+            .order('name', { ascending: true });
+
+        if (error) throw error;
+
+        const companiesWithRoles = await Promise.all(
+            (companies || []).map(async (company) => {
+                const { data: roles } = await supabase
+                    .from('CompanyRole')
+                    .select('id, title, description, relevant_majors, start_date, end_date, salary')
+                    .eq('company_id', company.id);
+                return { ...company, roles: roles || [] };
+            })
+        );
+
+        res.status(200).json({ success: true, data: companiesWithRoles });
+    } catch (error) {
+        console.error('Get all companies error:', error);
+        res.status(500).json({ success: false, error: 'Internal server error while fetching companies' });
+    }
+});
+
+
 // Company overview endpoints
 
 // Return the full overview for a specific company (description, roles, FAQs)
 // GET /companies/:companyId/overview
 router.get('/companies/:companyId/overview', async (req, res) => {
     try {
-        const userId = authenticateToken(req, res);
-        if (!userId) {
-            return;
-        }
-
         const { companyId } = req.params;
 
         // fetch core company info
         const { data: company, error: companyError } = await supabase
             .from('Company')
-            .select('id, name, industry, description, overview, logo_url, careers_page_url, headquarters_location, website_url')
+            .select('id, name, industry, overview, headquarters_location, logo_url, careers_page_url, website_url')
             .eq('id', companyId)
             .single();
 
         if (companyError || !company) {
+            console.error('Company fetch error:', companyError);
             return res.status(404).json({
                 success: false,
                 error: 'Company not found'
@@ -74,9 +102,9 @@ router.get('/companies/:companyId/overview', async (req, res) => {
             .select('id, title, description, area, relevant_majors, start_date, end_date, salary')
             .eq('company_id', companyId);
 
-        if (rolesError) {
-            throw rolesError;
-        }
+        // if (rolesError) {
+        //     throw rolesError;
+        // }
 
         // fetch associated FAQs
         const { data: faqs, error: faqsError } = await supabase
@@ -84,9 +112,9 @@ router.get('/companies/:companyId/overview', async (req, res) => {
             .select('id, question, answer')
             .eq('company_id', companyId);
 
-        if (faqsError) {
-            throw faqsError;
-        }
+        // if (faqsError) {
+        //     throw faqsError;
+        // }
 
         // return full overview
         res.status(200).json({

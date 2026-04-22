@@ -123,7 +123,7 @@ interface Responses {
 
 // ─── Mock data — replace getMockCompany with a real API call when backend is ready ──
 
-function getMockPost(): Post[] {
+export function getMockPost(): Post[] {
   return [
     {
       id: 1,

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getToken, getUser } from "@/lib/auth";
+import AddMembersModal from "@/components/AddMembersModal";
 
 const API_URL = 'http://localhost:3000/api';
 
@@ -13,6 +14,8 @@ export default function CreatePrivateGrp() {
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [membersModalOpen, setMembersModalOpen] = useState(false);
+  const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
 
   const handleCreate = async () => {
     setError('');
@@ -109,8 +112,13 @@ export default function CreatePrivateGrp() {
                   <p className="text-sm text-red-500">{error}</p>
                 )}
 
-                <button className="w-40 h-8 rounded outline outline-2 outline-gray-300 shrink-0 flex items-center justify-center gap-2">
-                  <p className="text-gray-600">+ Add Members</p>
+                <button
+                  onClick={() => setMembersModalOpen(true)}
+                  className="w-44 h-8 rounded outline outline-2 outline-gray-300 shrink-0 flex items-center justify-center gap-2 hover:bg-gray-50 transition"
+                >
+                  <p className="text-gray-600">
+                    + Add Members{selectedMembers.length > 0 ? ` (${selectedMembers.length})` : ""}
+                  </p>
                 </button>
 
                 <button
@@ -126,6 +134,13 @@ export default function CreatePrivateGrp() {
           </section>
         </div>
       </div>
+
+      <AddMembersModal
+        isOpen={membersModalOpen}
+        onClose={() => setMembersModalOpen(false)}
+        selectedMembers={selectedMembers}
+        onMembersChange={setSelectedMembers}
+      />
     </div>
   );
 }

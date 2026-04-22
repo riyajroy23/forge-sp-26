@@ -1,17 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Heart, Search, ChevronDown, ArrowLeft, BarChart2 } from "lucide-react";
+import { Heart, Search, ChevronDown, ArrowLeft, BarChart2, UserPlus, Check, MapPin, Briefcase, ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {ButtonGroup,} from "@/components/ui/button-group";
 import { cn } from "@/lib/utils";
 import RoleCard from "@/components/RoleCard";
 import FAQItem from "@/components/FAQItem";
 import { Button } from "@/components/ui/button";
+import { getToken } from "@/lib/auth";
+import QuestionCard from "@/components/ui/QuestionCard";
+import { getMockPost } from "@/Pages/company_msg_board";
+
+const API_URL = "http://localhost:3000/api";
 
 export default function CompanyOverviewPage() {
-  const { id = "1" } = useParams<{ id: string }>();
+  const { id = "" } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const company = getMockCompany(id);
+  const mockCompany = getMockCompany(id);
+
+  const [companyName, setCompanyName] = useState(mockCompany.name);
+  const [companyOverview, setCompanyOverview] = useState(mockCompany.overview);
+  const [companyLocation, setCompanyLocation] = useState<string | null>(null);
+  const [companyIndustry, setCompanyIndustry] = useState<string | null>(null);
+  const [companyLogoUrl, setCompanyLogoUrl] = useState<string | null>(null);
+  const [companyWebsiteUrl, setCompanyWebsiteUrl] = useState<string | null>(null);
+  const [companyCareersUrl, setCompanyCareersUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!id) return;
+    fetch(`${API_URL}/companies/${id}/overview`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success && json.data) {
+          setCompanyName(json.data.name);
+          setCompanyOverview(json.data.overview ?? mockCompany.overview);
+          setCompanyLocation(json.data.headquarters_location ?? null);
+          setCompanyIndustry(json.data.industry ?? null);
+          setCompanyLogoUrl(json.data.logo_url ?? null);
+          setCompanyWebsiteUrl(json.data.website_url ?? null);
+          setCompanyCareersUrl(json.data.careers_page_url ?? null);
+        }
+      })
+      .catch(console.error);
+  }, [id]);
+
+  const company = { ...mockCompany, name: companyName, overview: companyOverview };
 
   const [followed, setFollowed] = useState(false);
   const [majorFilter, setMajorFilter] = useState("All Majors");
@@ -19,7 +52,33 @@ export default function CompanyOverviewPage() {
   const [majorDropdownOpen, setMajorDropdownOpen] = useState(false);
   const [peopleDropdownOpen, setPeopleDropdownOpen] = useState(false);
   const [peopleFilter, setPeopleFilter] = useState("Alumni");
-  const [activeTab, setActiveTab] = useState<"main" | "people" | "interviews">("main");
+  const [activeTab, setActiveTab] = useState<"main" | "people" | "interviews" | "message_board">("main");
+  const posts = getMockPost();
+  const [postSearch, setPostSearch] = useState("");
+  // tracks which person IDs have been friended (mock — keyed by companyPeople id string)
+  const [friendedIds, setFriendedIds] = useState<Set<string>>(new Set());
+  const [addingFriendId, setAddingFriendId] = useState<string | null>(null);
+
+  const addFriend = async (personId: string) => {
+    setAddingFriendId(personId);
+    try {
+      const token = getToken();
+      // POST to /api/friends — friend_id would be the real DB user id in production
+      await fetch(`${API_URL}/friends`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ friend_id: personId }),
+      });
+      setFriendedIds((prev) => new Set(prev).add(personId));
+    } catch (e) {
+      console.error("Add friend error:", e);
+    } finally {
+      setAddingFriendId(null);
+    }
+  };
 
   const filteredRoles = company.roles.filter(r => {
     const matchesMajor = majorFilter === "All Majors" || r.majors.includes(majorFilter);
@@ -54,8 +113,11 @@ export default function CompanyOverviewPage() {
 
       <Card className="my-13 rounded-xl border-0 shadow-sm bg-gray-200 px-8">
         <CardContent className="p-6 flex gap-6 items-start">
-          <div className="w-40 h-40 rounded-lg bg-[var(--color-medgrey)] shrink-0 flex items-center justify-center mr-6">
-            <BarChart2 className="w-14 h-14 text-white" />
+          <div className="w-40 h-40 rounded-lg bg-[var(--color-medgrey)] shrink-0 flex items-center justify-center mr-6 overflow-hidden">
+            {companyLogoUrl
+              ? <img src={companyLogoUrl} alt={`${company.name} logo`} className="w-full h-full object-contain p-2" />
+              : <BarChart2 className="w-14 h-14 text-white" />
+            }
           </div>
 
           <div className="flex-1 min-w-0 pt-2">
@@ -71,6 +133,45 @@ export default function CompanyOverviewPage() {
                   followed ? "fill-[var(--color-darkred)] text-[var(--color-darkred)]" : "text-gray-400"
                 )} />
               </button>
+            </div>
+
+            <div className="flex items-center gap-4 mt-2 flex-wrap">
+              {companyLocation && (
+                <div className="flex items-center gap-1 text-gray-500">
+                  <MapPin className="w-4 h-4 shrink-0" />
+                  <span className="text-base font-[var(--font-spacegrotesk)]">{companyLocation}</span>
+                </div>
+              )}
+              {companyIndustry && (
+                <div className="flex items-center gap-1 text-gray-500">
+                  <Briefcase className="w-4 h-4 shrink-0" />
+                  <span className="text-base font-[var(--font-spacegrotesk)]">{companyIndustry}</span>
+                </div>
+              )}
+              {companyWebsiteUrl && (
+                <a
+                  href={companyWebsiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-[var(--color-darkred)] hover:underline text-base font-[var(--font-spacegrotesk)]"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <ExternalLink className="w-4 h-4 shrink-0" />
+                  Website
+                </a>
+              )}
+              {companyCareersUrl && (
+                <a
+                  href={companyCareersUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-[var(--color-darkred)] hover:underline text-base font-[var(--font-spacegrotesk)]"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <ExternalLink className="w-4 h-4 shrink-0" />
+                  Careers
+                </a>
+              )}
             </div>
 
             {/* Alumni strip */}
@@ -109,6 +210,13 @@ export default function CompanyOverviewPage() {
                     variant={activeTab === "interviews" ? "default" : "outline"}
                   >
                     Interviews
+                  </Button>
+                  <Button
+                    className="text-md"
+                    onClick={() => setActiveTab("message_board")}
+                    variant={activeTab === "message_board" ? "default" : "outline"}
+                  >
+                    Message Board
                   </Button>
               </ButtonGroup>
           </div>
@@ -287,13 +395,34 @@ export default function CompanyOverviewPage() {
                 {/* Role list */}
                 <div className="flex flex-col gap-3">
                   {filteredPeople.length > 0 ? (
-                    filteredPeople.map(p => 
-                      <div key={p.id} className="rounded-lg border p-4">
-                        <p className="font-semibold">{p.name}</p>
-                        <p className="text-md text-gray-600">{p.role.join(", ")}</p>
-                        <p className="text-md text-gray-500">{p.status}</p>
-                      </div>
-                    )
+                    filteredPeople.map(p => {
+                      const isFriended = friendedIds.has(p.id);
+                      const isAdding = addingFriendId === p.id;
+                      return (
+                        <div key={p.id} className="rounded-lg border p-4 flex items-center gap-4">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold font-[var(--font-spacegrotesk)]">{p.name}</p>
+                            <p className="text-md text-gray-600 font-[var(--font-spacegrotesk)]">{p.role.join(", ")}</p>
+                            <p className="text-md text-gray-500 font-[var(--font-spacegrotesk)]">{p.status}</p>
+                          </div>
+                          <button
+                            onClick={() => !isFriended && addFriend(p.id)}
+                            disabled={isAdding || isFriended}
+                            className={cn(
+                              "flex items-center gap-1 px-3 py-1.5 rounded-full text-sm border transition font-[var(--font-spacegrotesk)] shrink-0",
+                              isFriended
+                                ? "border-green-400 text-green-600 bg-green-50 cursor-default"
+                                : "border-[#b11d1d] text-[#b11d1d] hover:bg-red-50 disabled:opacity-50"
+                            )}
+                          >
+                            {isFriended
+                              ? <><Check className="w-3.5 h-3.5" /> Friends</>
+                              : <><UserPlus className="w-3.5 h-3.5" /> {isAdding ? "Adding..." : "Add Friend"}</>
+                            }
+                          </button>
+                        </div>
+                      );
+                    })
                   ) : (
                     <p className="text-md text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
                       No roles match your filters.
@@ -314,6 +443,39 @@ export default function CompanyOverviewPage() {
                 ))}
               </CardContent>
             </Card></>
+      )}
+
+      {activeTab === "message_board" && (
+        <section className="mb-6">
+          <h2 className="headers text-2xl mb-3">Message Board</h2>
+          <Card className="rounded-xl border-0 shadow-sm bg-white">
+            <CardContent className="p-6 flex flex-col gap-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search posts..."
+                  value={postSearch}
+                  onChange={e => setPostSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 text-md border border-gray-200 rounded-md
+                             font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
+                             focus:ring-[var(--color-darkred)]/40"
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                {posts.filter(p => p.questionTitle.toLowerCase().includes(postSearch.toLowerCase())).length > 0 ? (
+                  posts
+                    .filter(p => p.questionTitle.toLowerCase().includes(postSearch.toLowerCase()))
+                    .map(p => <QuestionCard key={p.id} post={p} />)
+                ) : (
+                  <p className="text-md text-gray-400 py-4 text-center font-[var(--font-spacegrotesk)]">
+                    No posts match your search.
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
       )}
 
       </div>

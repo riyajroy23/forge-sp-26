@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { StreamChat, Channel as StreamChannel } from 'stream-chat';
 import { Chat, Channel, ChannelHeader, MessageList, Window, MessageComposer } from 'stream-chat-react';
-import 'stream-chat-react/dist/css/v2/index.css';
+import 'stream-chat-react/dist/css/index.css';
 
 const API_URL = 'http://localhost:3000/api';
 const client = StreamChat.getInstance(import.meta.env.VITE_STREAM_API_KEY);
