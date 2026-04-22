@@ -9,7 +9,61 @@ import FAQItem from "@/components/FAQItem";
 export default function CompanyOverviewPage() {
   const { id = "1" } = useParams<{ id: string }>();
   const navigate = useNavigate();
+<<<<<<< Updated upstream
   const company = getMockCompany(id);
+=======
+  const mockCompany = getMockCompany(id);
+
+  const [companyName, setCompanyName] = useState("");
+  const [companyOverview, setCompanyOverview] = useState("");
+  const [companyLocation, setCompanyLocation] = useState<string | null>(null);
+  const [companyIndustry, setCompanyIndustry] = useState<string | null>(null);
+  const [companyLogoUrl, setCompanyLogoUrl] = useState<string | null>(null);
+  const [companyWebsiteUrl, setCompanyWebsiteUrl] = useState<string | null>(null);
+  const [companyCareersUrl, setCompanyCareersUrl] = useState<string | null>(null);
+  const [companyRoles, setCompanyRoles] = useState<Role[]>([]);
+
+  useEffect(() => {
+    if (!id) return;
+    
+    // Fetch overview data
+    fetch(`${API_URL}/companies/${id}/overview`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success && json.data) {
+          setCompanyName(json.data.name);
+          setCompanyOverview(json.data.overview ?? null);
+          setCompanyLocation(json.data.headquarters_location ?? null);
+          setCompanyIndustry(json.data.industry ?? null);
+          setCompanyLogoUrl(json.data.logo_url ?? null);
+          setCompanyWebsiteUrl(json.data.website_url ?? null);
+          setCompanyCareersUrl(json.data.careers_page_url ?? null);
+        }
+      })
+      .catch(console.error);
+
+    // Fetch roles data separately
+    fetch(`${API_URL}/companies/${id}/roles`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success && json.data && json.data.roles) {
+          setCompanyRoles(json.data.roles.map((r: any) => ({
+            id: r.id,
+            title: r.title,
+            description: r.description,
+            startDate: r.start_date,
+            endDate: r.end_date,
+            salary: r.salary,
+            location: r.headquarters_location ?? "",
+            majors: r.relevant_majors || [],
+          })));
+        }
+      })
+      .catch(console.error);
+  }, [id]);
+
+  const company = { ...mockCompany, name: companyName, overview: companyOverview, roles: companyRoles };
+>>>>>>> Stashed changes
 
   const [followed, setFollowed] = useState(false);
   const [majorFilter, setMajorFilter] = useState("All Majors");
@@ -17,8 +71,10 @@ export default function CompanyOverviewPage() {
   const [majorDropdownOpen, setMajorDropdownOpen] = useState(false);
 
   const filteredRoles = company.roles.filter(r => {
-    const matchesMajor = majorFilter === "All Majors" || r.majors.includes(majorFilter);
-    const matchesSearch = r.title.toLowerCase().includes(search.toLowerCase());
+    const title = r.title || "";
+    const majors: string | string[] = r.majors || [];
+    const matchesMajor = majorFilter === "All Majors" || majors.includes(majorFilter);
+    const matchesSearch = title.toLowerCase().includes(search.toLowerCase());
     return matchesMajor && matchesSearch;
   });
 
@@ -199,6 +255,7 @@ export interface Role {
   startDate: string;
   endDate: string;
   salary: string;
+  location: string;
   majors: string[];
 }
 
