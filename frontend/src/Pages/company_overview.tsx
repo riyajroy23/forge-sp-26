@@ -18,8 +18,8 @@ export default function CompanyOverviewPage() {
   const navigate = useNavigate();
   const mockCompany = getMockCompany(id);
 
-  const [companyName, setCompanyName] = useState(mockCompany.name);
-  const [companyOverview, setCompanyOverview] = useState(mockCompany.overview);
+  const [companyName, setCompanyName] = useState("");
+  const [companyOverview, setCompanyOverview] = useState("");
   const [companyLocation, setCompanyLocation] = useState<string | null>(null);
   const [companyIndustry, setCompanyIndustry] = useState<string | null>(null);
   const [companyLogoUrl, setCompanyLogoUrl] = useState<string | null>(null);
@@ -33,7 +33,7 @@ export default function CompanyOverviewPage() {
       .then((json) => {
         if (json.success && json.data) {
           setCompanyName(json.data.name);
-          setCompanyOverview(json.data.overview ?? mockCompany.overview);
+          setCompanyOverview(json.data.overview ?? null);
           setCompanyLocation(json.data.headquarters_location ?? null);
           setCompanyIndustry(json.data.industry ?? null);
           setCompanyLogoUrl(json.data.logo_url ?? null);
@@ -113,7 +113,7 @@ export default function CompanyOverviewPage() {
 
       <Card className="my-13 rounded-xl border-0 shadow-sm bg-gray-200 px-8">
         <CardContent className="p-6 flex gap-6 items-start">
-          <div className="w-40 h-40 rounded-lg bg-[var(--color-medgrey)] shrink-0 flex items-center justify-center mr-6 overflow-hidden">
+          <div className="w-40 h-40 rounded-lg shrink-0 flex items-center justify-center mr-6 overflow-hidden">
             {companyLogoUrl
               ? <img src={companyLogoUrl} alt={`${company.name} logo`} className="w-full h-full object-contain p-2" />
               : <BarChart2 className="w-14 h-14 text-white" />

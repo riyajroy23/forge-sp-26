@@ -18,7 +18,7 @@ import { useState } from "react";
 
 const FEATURED_COMPANIES = [
   {
-    id: "1",
+    id: "94939444-1771-49f7-8ff0-7aef09474261",
     name: "Amazon",
     tagline: "Software · Cloud · Data Analytics",
     alumni: 3,
@@ -26,17 +26,17 @@ const FEATURED_COMPANIES = [
     followed: false,
   },
   {
-    id: "2",
-    name: "Apple",
+    id: "76e8cda6-6ce6-4acc-bb9f-dde658324d58",
+    name: "Accenture",
     tagline: "Business · Fintech · Consulting",
     alumni: 5,
     openRoles: 2,
     followed: true,
   },
   {
-    id: "3",
-    name: "Amada",
-    tagline: " Engineering · Mechanical · Hardware",
+    id: "7bf2ceb0-8e08-4ddd-a80c-26b94b7e99d7",
+    name: "Chewy",
+    tagline: " Retail · Technology · Engineering",
     alumni: 2,
     openRoles: 6,
     followed: false,
