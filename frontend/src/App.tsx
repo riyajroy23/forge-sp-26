@@ -14,6 +14,7 @@ import LaunchScreen from "./Pages/LaunchScreen";
 import SignupPage from "./Pages/SignupPage";
 import SigninPage from "./Pages/SigninPage";
 import AccountSettings from "./Pages/AccountSettings";
+import ProfilePage from "./Pages/profile_page";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
 

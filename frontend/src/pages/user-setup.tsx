@@ -1,8 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Upload, User, ChevronRight } from "lucide-react";
+import { Pencil, Upload, User, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
 import { api } from "../lib/api";
 import recoopLogo from "../assets/images/recoop-logo2.png";
+import * as React from "react";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
 
 // ─── Reusable field row ───────────────────────────────────────────────────────
 
@@ -71,8 +78,9 @@ export default function UserSetup() {
   React.useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const currentUser = await api.getCurrentUser();
-        if (currentUser) {
+        const res = await api.getMe();
+        if (res.success && res.data && res.data.user) {
+          const currentUser = res.data.user;
           setUser(currentUser);
           setBio(currentUser.bio || '');
           setMajor(currentUser.major || '');
