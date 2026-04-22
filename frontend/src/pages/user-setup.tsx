@@ -1,257 +1,260 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import {Tabs,TabsContent, TabsList, TabsTrigger,} from "@/components/ui/tabs"
-import { format } from "date-fns"
-import * as React from "react"
-import { Calendar as CalendarIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { api } from "../lib/api"
- 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { format } from "date-fns";
+import * as React from "react";
+import { Calendar as CalendarIcon, Pencil, Upload, User } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
+// ─── Reusable field row ───────────────────────────────────────────────────────
+
+function FieldRow({
+  label,
+  value,
+  onEdit,
+}: {
+  label: string;
+  value: string;
+  onEdit?: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-between py-4 border-b border-gray-100 last:border-0">
+      <div>
+        <p className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide mb-0.5">
+          {label}
+        </p>
+        <p className="text-sm font-[var(--font-spacegrotesk)] text-gray-800">{value}</p>
+      </div>
+      {onEdit && (
+        <button
+          onClick={onEdit}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200
+                     text-gray-500 text-xs font-[var(--font-spacegrotesk)] hover:border-[#b11d1d]
+                     hover:text-[#b11d1d] transition bg-white"
+        >
+          <Pencil className="w-3 h-3" />
+          Edit
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ─── UserSetup ────────────────────────────────────────────────────────────────
 
 export default function UserSetup() {
-  const [date, setDate] = React.useState<Date>()
-  const [user, setUser] = React.useState<any>(null);
-  const [bio, setBio] = React.useState('');
-  const [major, setMajor] = React.useState('');
-  const [loading, setLoading] = React.useState(true);
-  const [message, setMessage] = React.useState('');
+  const [date, setDate] = React.useState<Date>();
 
-  React.useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await api.getMe();
-        if (res.success) {
-            setUser(res.data.user);
-            setBio(res.data.user.bio || '');
-            setMajor(res.data.user.major || '');
-        }
-      } catch (err) {
-        console.error("Failed to load user", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchUser();
-  }, []);
+  return (
+    <div className="min-h-screen bg-[var(--color-lightgrey)] -m-8 p-8">
 
-  const handleSave = async () => {
-    if (!user) return;
-    setMessage('');
-    try {
-        const res = await api.updateProfile(user.user_id, {
-            bio,
-            major
-        });
-        if (res.success) {
-            setMessage('Profile updated successfully!');
-            setUser(res.data.user);
-        } else {
-            setMessage(res.error || 'Failed to update profile');
-        }
-    } catch (err) {
-        setMessage('An error occurred while saving.');
-    }
-  };
+      {/* ── Page header ──────────────────────────────────────────────────── */}
+      <div className="mb-6">
+        <h1 className="headers text-2xl">My Profile</h1>
+        <p className="text-sm text-gray-500 font-[var(--font-spacegrotesk)] mt-1">
+          Manage your personal information and account settings.
+        </p>
+      </div>
 
-  if (loading) return <div className="text-white bg-red-900 min-h-screen p-10 flex items-center justify-center">Loading...</div>;
+      {/* ── Profile hero card ────────────────────────────────────────────── */}
+      <Card className="rounded-xl border-0 shadow-sm bg-white mb-6">
+        <CardContent className="p-6 flex items-center gap-6">
+          {/* Avatar */}
+          <div className="relative shrink-0">
+            <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
+              <User className="w-9 h-9 text-gray-400" />
+            </div>
+            <button
+              className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[#b11d1d] flex items-center
+                         justify-center border-2 border-white hover:bg-[#8e1616] transition"
+              aria-label="Change profile picture"
+            >
+              <Pencil className="w-3 h-3 text-white" />
+            </button>
+          </div>
 
-  return ( 
-    <Tabs defaultValue="profile" className="w-[400px]">
-      <TabsList className="bg-red-900 text-white">
-        <TabsTrigger
-          value="profile"
-          className="text-white data-[state=active]:bg-gray-500 data-[state=active]:bg-gray-900
-        data-[state=active]:text-white"
+          {/* Name / username */}
+          <div className="flex-1">
+            <p className="text-xl font-[var(--font-spacegrotesk)] font-bold text-gray-900">
+              Riya Roy
+            </p>
+            <p className="text-sm text-gray-500 font-[var(--font-spacegrotesk)]">@riyaroy</p>
+            <div className="mt-2 flex gap-2">
+              <span className="px-2 py-0.5 rounded-full bg-[#b11d1d]/10 text-[#b11d1d] text-xs font-[var(--font-spacegrotesk)]">
+                Computer Science
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs font-[var(--font-spacegrotesk)]">
+                Class of 2026
+              </span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        > Profile
-        </TabsTrigger>
+      {/* ── Tabs ─────────────────────────────────────────────────────────── */}
+      <Tabs defaultValue="profile">
+        <TabsList className="bg-white border border-gray-200 rounded-xl p-1 mb-4 shadow-sm">
+          <TabsTrigger
+            value="profile"
+            className="rounded-lg font-[var(--font-spacegrotesk)] text-gray-500
+                       data-[state=active]:bg-[#b11d1d] data-[state=active]:text-white
+                       data-[state=active]:shadow-sm transition"
+          >
+            Profile
+          </TabsTrigger>
+          <TabsTrigger
+            value="account"
+            className="rounded-lg font-[var(--font-spacegrotesk)] text-gray-500
+                       data-[state=active]:bg-[#b11d1d] data-[state=active]:text-white
+                       data-[state=active]:shadow-sm transition"
+          >
+            Account Info
+          </TabsTrigger>
+          <TabsTrigger
+            value="details"
+            className="rounded-lg font-[var(--font-spacegrotesk)] text-gray-500
+                       data-[state=active]:bg-[#b11d1d] data-[state=active]:text-white
+                       data-[state=active]:shadow-sm transition"
+          >
+            Details
+          </TabsTrigger>
+        </TabsList>
 
-        <TabsTrigger
-          value="account"
-          className="text-white data-[state=active]:bg-gray-500 data-[state=active]:bg-gray-900
-        data-[state=active]:text-white"
-        >
-          Account Info
-        </TabsTrigger>
-
-        <TabsTrigger
-          value="details"
-          className="text-white data-[state=active]:bg-gray-500 data-[state=active]:bg-gray-900
-        data-[state=active]:text-white"
-        >
-          Details
-        </TabsTrigger>
-      </TabsList>
-
-
-      <TabsContent value="profile">
-        <div className="min-h-screen flex items-center justify-center bg-red-900">
-          <Card className="w-full max-w-md">
-            <CardTitle>My Profile </CardTitle>
+        {/* ── Profile tab ──────────────────────────────────────────────────── */}
+        <TabsContent value="profile">
+          <Card className="rounded-xl border-0 shadow-sm bg-white">
             <CardContent className="p-6">
+              <h2 className="text-base font-[var(--font-spacegrotesk)] font-semibold text-gray-900 mb-4">
+                Public Profile
+              </h2>
+
+              {/* Display name */}
+              <div className="mb-4">
+                <label className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide block mb-1">
+                  Display Name
+                </label>
+                <input
+                  type="text"
+                  defaultValue="Riya Roy"
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg
+                             font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
+                             focus:ring-[#b11d1d]/40 text-gray-800"
+                />
+              </div>
 
               {/* Username */}
-              <div className="flex items-center gap-4">
-                <button
-                  className="w-16 h-16 rounded-full bg-gray-300 hover:bg-gray-400 transition"
-                  aria-label="Edit profile picture"
+              <div className="mb-4">
+                <label className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide block mb-1">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  defaultValue="@riyaroy"
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg
+                             font-[var(--font-spacegrotesk)] focus:outline-none focus:ring-2
+                             focus:ring-[#b11d1d]/40 text-gray-800"
                 />
-
-                <div>
-                  <p className="text-left font-semibold">{user?.username || 'username'}</p>
-                  <p className="text-left font-normal">{user?.first_name || 'Name'} {user?.last_name || ''}</p>
-                </div>
-
               </div>
 
-              {/* BIO */}
-              <div>
-                <label className="text-left font-normal">Bio</label>
+              {/* Bio */}
+              <div className="mb-5">
+                <label className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide block mb-1">
+                  Bio
+                </label>
                 <Textarea
                   placeholder="Tell us a little about yourself..."
-                  className="mt-1"
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
+                  className="font-[var(--font-spacegrotesk)] text-sm text-gray-800 focus:ring-2
+                             focus:ring-[#b11d1d]/40 border-gray-200 resize-none"
+                  rows={3}
                 />
               </div>
 
-              {message && <p className="mt-4 text-sm text-green-600">{message}</p>}
-              <Button onClick={handleSave} className="mt-4 w-full">Save Changes</Button>
-
-            </CardContent>
-          </Card>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="account">
-        <div className="min-h-screen flex items-center justify-center bg-red-900">
-          <Card className="w-full max-w-md">
-            <CardTitle>My Account</CardTitle>
-            <CardContent className="p-6">
-
-              <div className="space-y-3">
-
-                {/* Email */}
-                <div className="flex items-center justify-between">
-                  <div className="text-left">
-                    <p className="text-sm font-semibold">Email</p>
-                    <p className="text-sm text-gray-600">{user?.email || 'user@email.com'}</p>
-                  </div>
-
-                  <button className="text-sm text-gray-200 bg-gray-100 hover:bg-gray-700">
-                    Edit
-                  </button>
-                </div>
-
-                {/* DOB */}
-                <div className="flex items-center justify-between">
-                  <div className="text-left">
-                    <p className="text-sm font-semibold">Date of Birth</p>
-                    <p className="text-sm text-gray-600">01 / 01 / 2002</p>
-                  </div>
-
-                  <button className="text-sm text-gray-200 bg-gray-100 hover:bg-gray-700">
-                    Edit
-                  </button>
-                </div>
-
-                {/* Resume */}
-                <div className="flex items-center justify-between">
-                  <div className="text-left">
-                    <p className="text-sm font-semibold">Resume</p>
-                    <p className="text-sm text-gray-600">resume.pdf</p>
-                  </div>
-
-                  {/* Dropdown will go here */}
-                </div>
-
+              <div className="flex justify-end">
+                <button
+                  className="px-4 py-2 rounded-lg bg-[#b11d1d] text-white text-sm
+                             font-[var(--font-spacegrotesk)] hover:bg-[#8e1616] transition"
+                >
+                  Save Changes
+                </button>
               </div>
             </CardContent>
           </Card>
-        </div>
-      </TabsContent>
+        </TabsContent>
 
-      <TabsContent value="details">
-        <div className="min-h-screen flex items-center justify-center bg-red-900">
-          <Card className="w-full max-w-md">
-            <CardTitle>Details</CardTitle>
+        {/* ── Account Info tab ─────────────────────────────────────────────── */}
+        <TabsContent value="account">
+          <Card className="rounded-xl border-0 shadow-sm bg-white">
             <CardContent className="p-6">
+              <h2 className="text-base font-[var(--font-spacegrotesk)] font-semibold text-gray-900 mb-2">
+                Account Information
+              </h2>
+              <FieldRow label="Email" value="riya@example.com" onEdit={() => {}} />
+              <FieldRow label="Date of Birth" value="January 1, 2002" onEdit={() => {}} />
 
-              <div className="space-y-3">
-
-                {/* Major */}
-                <div className="flex items-center justify-between">
-                  <div className="text-left w-full mr-4">
-                    <p className="text-sm font-semibold">Major</p>
-                    <input 
-                      type="text" 
-                      className="text-sm text-gray-600 border p-1 rounded mt-1 w-full" 
-                      value={major}
-                      onChange={(e) => setMajor(e.target.value)}
-                      placeholder="e.g. Computer Science"
-                    />
-                  </div>
+              {/* Resume */}
+              <div className="flex items-center justify-between py-4 border-b border-gray-100">
+                <div>
+                  <p className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide mb-0.5">
+                    Resume
+                  </p>
+                  <p className="text-sm font-[var(--font-spacegrotesk)] text-gray-800">resume.pdf</p>
                 </div>
-
-                {/* Minor */}
-                <div className="flex items-center justify-between">
-                  <div className="text-left">
-                    <p className="text-sm font-semibold">Minor(s)</p>
-                    <p className="text-sm text-gray-600">minor(s) here</p>
-                  </div>
-
-                  <button className="text-sm text-gray-200 bg-gray-100 hover:bg-gray-700">
-                    Edit
-                  </button>
-                </div>
-
-                {/* Graduation Year */}
-                <div className="flex items-center justify-between">
-                  <div className="text-left">
-                    <p className="text-sm font-semibold">Graduation year</p>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          data-empty={!date}
-                          className="w-[280px] justify-start text-left font-normal
-                                    bg-gray-100 text-gray-100
-                                    hover:bg-gray-200
-                                    data-[empty=true]:text-muted-foreground"
-                        >
-                          <CalendarIcon />
-                          {date ? format(date, "PPP") : <span>Pick a date</span>}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="z-50 w-auto p-0 bg-red-800 text-white border-gray-700">
-                        <Calendar className="text-white
-                                            [&_button]:text-white
-                                            [&_button:hover]:bg-gray-700
-                                            [&_[aria-selected=true]]:bg-gray-600
-                                            "mode="single" selected={date} onSelect={setDate} />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-
-                  {/* Dropdown will go here */}
-                </div>
-                
-                {message && <p className="mt-4 text-sm text-green-600">{message}</p>}
-                <Button onClick={handleSave} className="mt-4 w-full">Save Details</Button>
-
+                <button
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200
+                             text-gray-500 text-xs font-[var(--font-spacegrotesk)] hover:border-[#b11d1d]
+                             hover:text-[#b11d1d] transition bg-white"
+                >
+                  <Upload className="w-3 h-3" />
+                  Upload new
+                </button>
               </div>
             </CardContent>
           </Card>
-        </div>
-      </TabsContent>
-    </Tabs>
+        </TabsContent>
+
+        {/* ── Details tab ──────────────────────────────────────────────────── */}
+        <TabsContent value="details">
+          <Card className="rounded-xl border-0 shadow-sm bg-white">
+            <CardContent className="p-6">
+              <h2 className="text-base font-[var(--font-spacegrotesk)] font-semibold text-gray-900 mb-2">
+                Academic Details
+              </h2>
+
+              <FieldRow label="Major" value="Computer Science" onEdit={() => {}} />
+              <FieldRow label="Minor(s)" value="Mathematics" onEdit={() => {}} />
+
+              {/* Graduation Year */}
+              <div className="py-4">
+                <p className="text-xs text-gray-400 font-[var(--font-spacegrotesk)] uppercase tracking-wide mb-2">
+                  Graduation Date
+                </p>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-60 justify-start text-left text-sm font-[var(--font-spacegrotesk)]",
+                        "border-gray-200 bg-white hover:border-[#b11d1d] hover:bg-white",
+                        "focus:ring-2 focus:ring-[#b11d1d]/40",
+                        !date && "text-gray-400"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 w-4 h-4 text-gray-400" />
+                      {date ? format(date, "MMMM yyyy") : "Pick a date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="z-50 w-auto p-0 bg-white border border-gray-200 shadow-lg rounded-xl">
+                    <Calendar mode="single" selected={date} onSelect={setDate} />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

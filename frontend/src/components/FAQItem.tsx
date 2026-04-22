@@ -1,33 +1,63 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 interface FAQItemProps {
   question: string;
   answer: string;
 }
-
 export default function FAQItem({ question, answer }: FAQItemProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="border-b border-gray-200 last:border-0">
+    <div className="bg-white transition-all duration-200">
+      {/* Question */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between py-3 text-left gap-2"
+        className="
+          w-full flex items-center justify-between gap-4
+          px-5 py-4 text-left !bg-transparent
+          hover:bg-gray-50 transition-colors
+        "
       >
-        <span className="text-sm font-semibold text-black font-[var(--font-spacegrotesk)]">
+        <span
+          className="
+            font-medium text-black text-lg
+            font-[var(--font-spacegrotesk)]
+            transition-colors duration-200
+          "
+        >
           {question}
         </span>
-        {open
-          ? <ChevronUp className="w-4 h-4 text-gray-500 shrink-0" />
-          : <ChevronDown className="w-4 h-4 text-gray-500 shrink-0" />}
+
+        <ChevronDown
+          className={`
+            w-5 h-5 text-gray-500 shrink-0
+            transition-transform duration-300
+            ${open ? "rotate-180 text-[#B11D1D]" : ""}
+          `}
+        />
       </button>
 
-      {open && (
-        <p className="pb-3 text-sm text-gray-600 font-[var(--font-spacegrotesk)]">
-          {answer}
-        </p>
-      )}
+      {/* Answer */}
+      <div
+        className={`
+          grid transition-all duration-300 ease-in-out
+          ${open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}
+        `}
+      >
+        <div className="overflow-hidden">
+          <p
+            className="
+              px-5 pb-4 pt-0
+              text-md text-gray-600
+              font-[var(--font-spacegrotesk)]
+              leading-relaxed
+            "
+          >
+            {answer}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
