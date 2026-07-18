@@ -1,6 +1,6 @@
 # forge-sp-26
 
-<img width="937" height="428" alt="Screenshot 2026-07-18 at 12 52 04 PM" src="https://github.com/user-attachments/assets/98887a2b-eac3-4974-ad89-770927de1c85" />
+<img width="555" height="271" alt="Screenshot 2026-07-18 at 12 52 58 PM" src="https://github.com/user-attachments/assets/05b727b4-6875-4c11-b8f0-cf88e134383e" />
 
 ## Project Overview
 
