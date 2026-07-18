@@ -1,5 +1,7 @@
 # forge-sp-26
 
+<img width="937" height="428" alt="Screenshot 2026-07-18 at 12 52 04 PM" src="https://github.com/user-attachments/assets/98887a2b-eac3-4974-ad89-770927de1c85" />
+
 ## Project Overview
 
 **Reco-Op** is a full-stack website designed to help students prepare for co-op opportunities through collaborative group-based preparation. Instead of navigating the co-op search and interview process alone, users can form co-op prep groups, share resources, and conduct mock interviews together. Users also have the opportunity to engage with current Northeastern co-ops and alumni who can mentor them about specific companies and roles through website-hosted coffee chats and workshops.
