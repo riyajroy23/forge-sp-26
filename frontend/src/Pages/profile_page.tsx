@@ -15,6 +15,25 @@ const MOCK_PROFILE = {
 };
 
 const ProfilePage = () => {
+  const [user, setUser] = useState<Record<string, unknown> | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await api.getMe();
+        if (res.success) {
+          setUser(res.data.user);
+        }
+      } catch (err) {
+        console.error("Failed to load user", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
   const topBoxes = Array.from({ length: 6 });
   const [isFriend, setIsFriend] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,12 +62,9 @@ const ProfilePage = () => {
 
   return (
     <div className="flex flex-col min-h-screen w-screen">
-
-      {/* Top black navbar */}
       <div className="w-full h-20 bg-black"></div>
 
       <div className="flex flex-1">
-
         <div className="w-32 bg-[#B11D1D] p-4 flex flex-col">
           <div className="flex flex-col gap-4">
             {topBoxes.map((_, idx) => (
@@ -60,6 +76,20 @@ const ProfilePage = () => {
         </div>
 
         <div className="flex-1 bg-white p-8">
+          <div className="flex items-center gap-4">
+            <div className="w-36 h-36 rounded-full bg-gray-400" />
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold text-black">
+                  {loading ? 'Loading...' : `${user?.first_name || 'Guest'} ${user?.last_name || ''}`}
+                </h1>
+                <BadgeIcon role={user?.role as string || user?.user_role as string} size={22} />
+              </div>
+              {user?.username && (
+                <p className="text-sm text-gray-500 mt-0.5">@{user.username as string}</p>
+              )}
+            </div>
+          </div>
 
           <div className="flex items-center gap-4">
             <div className="w-36 h-36 rounded-full bg-gray-400" />

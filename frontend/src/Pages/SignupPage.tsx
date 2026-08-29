@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import recoopLogo from '../assets/images/recoop-logo2.png';
-import { saveAuth } from '@/lib/auth';
 import './SignupPage.css';
-
-const API_URL = 'http://localhost:3000/api';
+import { api } from '../lib/api';
+import { saveAuth } from '../lib/auth';
 
 const SignupPage = () => {
     const navigate = useNavigate();
-
     const [displayName, setDisplayName] = useState('');
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('STUDENT');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -20,34 +20,23 @@ const SignupPage = () => {
         e.preventDefault();
         setError('');
         setLoading(true);
-
         try {
-            const response = await fetch(`${API_URL}/signup`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: displayName,
-                    email,
-                    password
-                })
+            const res = await api.signup({
+                email,
+                username,
+                password,
+                role,
+                name: displayName
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                // display error message returned from backend (e.g. invalid email, weak password)
-                setError(data.error || 'Signup failed. Please try again.');
-                return;
+            if (res.success) {
+                saveAuth(res.data.token, res.data.user);
+                navigate('/setup');
+            } else {
+                setError(res.error || 'Signup failed');
             }
-
-            // store token and user in localStorage
-            saveAuth(data.data.token, data.data.user);
-
-            // navigate to setup page
-            navigate('/setup');
-
         } catch (err) {
-            setError('Unable to connect to server. Please try again.');
+            setError((err as Error).message || 'An error occurred during signup');
         } finally {
             setLoading(false);
         }
@@ -60,14 +49,34 @@ const SignupPage = () => {
 
                 <h1 className="signup-title">Create an account</h1>
 
-                {/* display error message from backend if signup fails */}
-                {error && (
-                    <p style={{ color: '#a83232', textAlign: 'center', marginBottom: '1rem', fontFamily: 'Fredoka, sans-serif' }}>
-                        {error}
-                    </p>
-                )}
+                {error && <p className="text-red-500 mb-4">{error}</p>}
 
                 <form onSubmit={handleSignup} className="signup-form">
+                    <div className="form-group">
+                        <label htmlFor="role">Role</label>
+                        <select
+                            id="role"
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                            required
+                            className="bg-white border text-black p-2 rounded"
+                        >
+                            <option value="STUDENT">Student</option>
+                            <option value="EMPLOYEE">Employee</option>
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="username">Username</label>
+                        <input
+                            id="username"
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </div>
+
                     <div className="form-group">
                         <label htmlFor="displayName">Display Name</label>
                         <input
@@ -100,17 +109,12 @@ const SignupPage = () => {
                             required
                         />
                     </div>
-
                     <Button type="submit" className="signup-button" disabled={loading}>
-                        {loading ? 'Creating account...' : 'Sign up'}
+                        {loading ? 'Signing up...' : 'Sign up'}
                     </Button>
                 </form>
-
                 <p className="signin-link">
-                    Already have an account?{" "}
-                    <a onClick={() => navigate("/signin")} style={{ cursor: 'pointer' }}>
-                        Sign In
-                    </a>
+                    Already have an account? <a onClick={() => navigate('/signin')} style={{ cursor: 'pointer' }}>Sign In</a>
                 </p>
             </div>
         </div>

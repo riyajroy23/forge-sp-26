@@ -41,7 +41,7 @@ const SigninPage = () => {
             // navigate to setup page
             navigate('/setup');
 
-        } catch (err) {
+        } catch {
             setError('Unable to connect to server. Please try again.');
         } finally {
             setLoading(false);

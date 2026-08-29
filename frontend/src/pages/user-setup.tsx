@@ -1,7 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format } from "date-fns";
+import { Pencil, Upload, User, Calendar as CalendarIcon } from "lucide-react";
+import { api } from "../lib/api";
+import recoopLogo from "../assets/images/recoop-logo2.png";
 import * as React from "react";
 import {
   Calendar as CalendarIcon,
@@ -179,6 +180,49 @@ function FileUploadField({
 
 function DatePickerField({ label, icon }: { label: string; icon?: React.ReactNode }) {
   const [date, setDate] = React.useState<Date>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [user, setUser] = React.useState<any>(null);
+  const [bio, setBio] = React.useState('');
+  const [major, setMajor] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
+  const [message, setMessage] = React.useState('');
+
+  const handleSave = async () => {
+    if (!user) return;
+    setMessage('');
+    try {
+      const res = await api.updateProfile(user.user_id, { bio, major });
+      if (res.success) {
+        setMessage('Profile updated successfully!');
+        setUser(res.data.user);
+      } else {
+        setMessage(res.error || 'Failed to update profile');
+      }
+    } catch {
+      setMessage('An error occurred while saving.');
+    }
+  };
+
+  React.useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res = await api.getMe();
+        if (res.success && res.data && res.data.user) {
+          const currentUser = res.data.user;
+          setUser(currentUser);
+          setBio(currentUser.bio || '');
+          setMajor(currentUser.major || '');
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  if (loading) return <div className="min-h-screen bg-[var(--color-lightgrey)] p-10 flex items-center justify-center">Loading...</div>;
 
   return (
     <div className="py-5 border-b border-gray-100 last:border-0">
